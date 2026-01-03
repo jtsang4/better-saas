@@ -1,13 +1,13 @@
-import { describe, it, expect, jest, beforeEach } from '@jest/globals'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 
 // Mock sonner
 const mockToast = {
-  success: jest.fn(),
-  error: jest.fn(),
-  info: jest.fn(),
+  success: vi.fn(),
+  error: vi.fn(),
+  info: vi.fn(),
 }
 
-jest.mock('sonner', () => ({
+vi.mock('sonner', () => ({
   toast: mockToast,
 }))
 
@@ -25,8 +25,8 @@ const mockTranslations = {
   'info.nameNotChanged': 'Name was not changed',
 }
 
-jest.mock('next-intl', () => ({
-  useTranslations: jest.fn(() => (key: string) => mockTranslations[key as keyof typeof mockTranslations] || key),
+vi.mock('next-intl', () => ({
+  useTranslations: vi.fn(() => (key: string) => mockTranslations[key as keyof typeof mockTranslations] || key),
 }))
 
 // Simple implementation to test
@@ -55,7 +55,7 @@ function createToastMessages() {
 
 describe('useToastMessages Hook Tests', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   describe('Success Messages', () => {

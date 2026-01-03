@@ -1,14 +1,26 @@
 import { blog } from '@/.source';
 import { loader } from 'fumadocs-core/source';
-import type { InferMetaType, InferPageType } from 'fumadocs-core/source';
+import type { InferMetaType, InferPageType, VirtualFile } from 'fumadocs-core/source';
+import type { ComponentType } from 'react';
+import { normalizeSourceFiles } from './source-utils';
+
+const blogSourceFiles = normalizeSourceFiles(
+  blog.toFumadocsSource() as unknown as { files: VirtualFile[] | (() => VirtualFile[]) }
+);
 
 export const blogSource = loader({
   baseUrl: '/blog',
-  source: blog.toFumadocsSource(),
+  source: { files: blogSourceFiles },
 });
 
 export type BlogMeta = InferMetaType<typeof blogSource>;
-export type BlogPage = InferPageType<typeof blogSource>;
+type BlogPageData = Record<string, unknown> & {
+  body: ComponentType<{ components?: Record<string, unknown> }>;
+  title?: string;
+  description?: string;
+};
+
+export type BlogPage = Omit<InferPageType<typeof blogSource>, 'data'> & { data: BlogPageData };
 
 interface BlogFrontmatter {
   title: string;
@@ -19,7 +31,7 @@ interface BlogFrontmatter {
 }
 
 export function getBlogPosts(locale = 'en'): BlogPage[] {
-  const allPosts = blogSource.getPages();
+  const allPosts = blogSource.getPages() as BlogPage[];
 
   const filteredPosts = allPosts.filter((post) => {
     const urlParts = post.url.split('/');
@@ -38,7 +50,7 @@ export function getBlogPosts(locale = 'en'): BlogPage[] {
 
 export function getBlogPost(slug: string[], locale = 'en'): BlogPage | undefined {
   const fullSlug = [locale, ...slug];
-  return blogSource.getPage(fullSlug);
+  return blogSource.getPage(fullSlug) as BlogPage | undefined;
 }
 
 export function formatDate(date: string | Date, locale = 'en'): string {

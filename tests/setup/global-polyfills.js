@@ -4,6 +4,11 @@
  * when running Next.js in a test environment.
  */
 
+import { createRequire } from 'node:module';
+import { vi } from 'vitest';
+
+const require = createRequire(import.meta.url);
+
 // Text encoding/decoding polyfills
 const { TextEncoder, TextDecoder } = require('util');
 
@@ -56,6 +61,8 @@ if (typeof global.ReadableStream === 'undefined') {
     }
   };
 }
+
+export {};
 
 if (typeof global.WritableStream === 'undefined') {
   global.WritableStream = class WritableStream {
@@ -247,6 +254,30 @@ if (typeof global.URLSearchParams === 'undefined') {
   global.URLSearchParams = require('url').URLSearchParams;
 }
 
+if (typeof global.localStorage === 'undefined' || typeof global.localStorage.clear !== 'function') {
+  const storage = new Map();
+
+  global.localStorage = {
+    getItem: (key) => {
+      const value = storage.get(String(key));
+      return value === undefined ? null : value;
+    },
+    setItem: (key, value) => {
+      storage.set(String(key), String(value));
+    },
+    removeItem: (key) => {
+      storage.delete(String(key));
+    },
+    clear: () => {
+      storage.clear();
+    },
+    key: (index) => Array.from(storage.keys())[index] ?? null,
+    get length() {
+      return storage.size;
+    },
+  };
+}
+
 // Fetch API polyfill (if not already available)
 if (typeof global.fetch === 'undefined') {
   try {
@@ -258,7 +289,7 @@ if (typeof global.fetch === 'undefined') {
     global.Headers = fetch.Headers;
   } catch (error) {
     // Fallback to basic mock if node-fetch is not available
-    global.fetch = jest.fn(() => 
+    global.fetch = vi.fn(() => 
       Promise.resolve({
         ok: true,
         status: 200,
@@ -268,9 +299,9 @@ if (typeof global.fetch === 'undefined') {
       })
     );
     
-    global.Request = jest.fn();
-    global.Response = jest.fn();
-    global.Headers = jest.fn();
+    global.Request = vi.fn();
+    global.Response = vi.fn();
+    global.Headers = vi.fn();
   }
 }
 
@@ -431,5 +462,3 @@ if (typeof global.MessageChannel === 'undefined') {
     close() {}
   };
 }
-
-module.exports = {}; 

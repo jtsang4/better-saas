@@ -1,4 +1,4 @@
-import { describe, it, expect, jest } from '@jest/globals';
+import { describe, it, expect } from 'vitest';
 
 // Simple permission logic tests without external dependencies
 function isAdminEmail(email: string, adminEmails: string[]): boolean {

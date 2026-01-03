@@ -4,6 +4,10 @@
  * where it might not be fully available or compatible with Next.js expectations.
  */
 
+import { createRequire } from 'node:module';
+
+const require = createRequire(import.meta.url);
+
 // Check if we're in a Node.js environment
 if (typeof global !== 'undefined' && typeof window === 'undefined') {
   // Try to get the Node.js performance API
@@ -129,4 +133,4 @@ if (typeof window !== 'undefined' && window.performance) {
   }
 }
 
-module.exports = {}; 
+export {};

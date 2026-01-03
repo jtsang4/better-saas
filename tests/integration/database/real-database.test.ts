@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll, afterAll, beforeEach } from '@jest/globals';
+import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
 import { drizzle } from 'drizzle-orm/neon-http';
 import { eq, and, desc, count, like, or } from 'drizzle-orm';
 import { user, session, file } from '../../../src/server/db/schema';
@@ -6,14 +6,11 @@ import type { User } from 'better-auth/types';
 
 // Test database URL - should use a separate test database
 const testDatabaseUrl = process.env.TEST_DATABASE_URL || process.env.DATABASE_URL;
+const db = testDatabaseUrl ? drizzle(testDatabaseUrl) : null;
+const describeDatabase = testDatabaseUrl ? describe : describe.skip;
 
-if (!testDatabaseUrl) {
-  throw new Error('TEST_DATABASE_URL or DATABASE_URL must be set for integration tests');
-}
-
-const testDb = drizzle(testDatabaseUrl);
-
-describe('Real Database Integration Tests', () => {
+describeDatabase('Real Database Integration Tests', () => {
+  const testDb = db as NonNullable<typeof db>;
   // Generate unique test IDs to avoid conflicts
   const generateTestId = () => `test-user-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
   const testUserId1 = generateTestId();

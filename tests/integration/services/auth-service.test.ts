@@ -3,69 +3,69 @@
  * Tests authentication workflows and session management
  */
 
-import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 
 // Mock auth client and database
 const mockAuthClient = {
-  signUp: jest.fn(),
-  signIn: jest.fn(),
-  signOut: jest.fn(),
-  getSession: jest.fn(),
-  refreshSession: jest.fn(),
-  resetPassword: jest.fn(),
-  verifyEmail: jest.fn(),
-  changePassword: jest.fn(),
+  signUp: vi.fn(),
+  signIn: vi.fn(),
+  signOut: vi.fn(),
+  getSession: vi.fn(),
+  refreshSession: vi.fn(),
+  resetPassword: vi.fn(),
+  verifyEmail: vi.fn(),
+  changePassword: vi.fn(),
 };
 
 const mockDb = {
   user: {
-    create: jest.fn(),
-    findFirst: jest.fn(),
-    findUnique: jest.fn(),
-    update: jest.fn(),
-    delete: jest.fn(),
+    create: vi.fn(),
+    findFirst: vi.fn(),
+    findUnique: vi.fn(),
+    update: vi.fn(),
+    delete: vi.fn(),
   },
   session: {
-    create: jest.fn(),
-    findFirst: jest.fn(),
-    update: jest.fn(),
-    delete: jest.fn(),
-    deleteMany: jest.fn(),
+    create: vi.fn(),
+    findFirst: vi.fn(),
+    update: vi.fn(),
+    delete: vi.fn(),
+    deleteMany: vi.fn(),
   },
   account: {
-    create: jest.fn(),
-    findFirst: jest.fn(),
-    delete: jest.fn(),
+    create: vi.fn(),
+    findFirst: vi.fn(),
+    delete: vi.fn(),
   },
 };
 
 // Mock auth actions
 const mockAuthActions = {
-  createUser: jest.fn(),
-  authenticateUser: jest.fn(),
-  validateSession: jest.fn(),
-  revokeSession: jest.fn(),
-  updateUserProfile: jest.fn(),
-  deleteUserAccount: jest.fn(),
+  createUser: vi.fn(),
+  authenticateUser: vi.fn(),
+  validateSession: vi.fn(),
+  revokeSession: vi.fn(),
+  updateUserProfile: vi.fn(),
+  deleteUserAccount: vi.fn(),
 };
 
 // Mock password hashing
 const mockBcrypt = {
-  hash: jest.fn(),
-  compare: jest.fn(),
+  hash: vi.fn(),
+  compare: vi.fn(),
 };
 
 // Mock JWT operations
 const mockJwt = {
-  sign: jest.fn(),
-  verify: jest.fn(),
-  decode: jest.fn(),
+  sign: vi.fn(),
+  verify: vi.fn(),
+  decode: vi.fn(),
 };
 
 describe('Authentication Service Integration Tests', () => {
   beforeEach(() => {
     // Reset all mocks
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     
     // Set up default mock implementations
     mockBcrypt.hash.mockResolvedValue('$2b$10$hashedpassword');
@@ -107,7 +107,7 @@ describe('Authentication Service Integration Tests', () => {
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('User Registration', () => {

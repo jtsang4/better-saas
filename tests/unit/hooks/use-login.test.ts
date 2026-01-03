@@ -1,4 +1,4 @@
-import { describe, it, expect, jest, beforeEach, afterEach } from '@jest/globals';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import {
   setupTestEnvironment,
@@ -19,7 +19,7 @@ function createUseLogin() {
     
     const router = mocks.router;
     const searchParams = {
-      get: jest.fn((key: string) => key === 'callbackUrl' ? null : null),
+      get: vi.fn((key: string) => key === 'callbackUrl' ? null : null),
     };
     const toastMessages = mocks.toastMessages;
     
@@ -90,9 +90,9 @@ function createUseLogin() {
 
 // Mock React hooks
 const React = {
-  useState: jest.fn(),
-  useEffect: jest.fn(),
-  useCallback: jest.fn(),
+  useState: vi.fn(),
+  useEffect: vi.fn(),
+  useCallback: vi.fn(),
 };
 
 describe('useLogin Hook Tests', () => {
@@ -112,7 +112,7 @@ describe('useLogin Hook Tests', () => {
     useLogin = createUseLogin();
 
     // Setup React hooks mocks
-    React.useState.mockImplementation((initial: any) => [initial, jest.fn()]);
+    React.useState.mockImplementation((initial: any) => [initial, vi.fn()]);
     React.useEffect.mockImplementation((fn: any) => fn());
     React.useCallback.mockImplementation((fn: any) => fn);
   });
@@ -135,7 +135,7 @@ describe('useLogin Hook Tests', () => {
     });
 
     it('should handle form data updates', () => {
-      const mockSetFormData = jest.fn();
+      const mockSetFormData = vi.fn();
       React.useState.mockReturnValue([{ email: '', password: '' }, mockSetFormData]);
 
       const { result } = renderHook(() => useLogin());
@@ -271,7 +271,7 @@ describe('useLogin Hook Tests', () => {
           
           const router = mocks.router;
           const searchParams = {
-            get: jest.fn((key: string) => key === 'callbackUrl' ? '/dashboard' : null),
+            get: vi.fn((key: string) => key === 'callbackUrl' ? '/dashboard' : null),
           };
           
           const getRedirectUrl = React.useCallback(() => {
@@ -281,12 +281,12 @@ describe('useLogin Hook Tests', () => {
 
           return {
             formData: { email: '', password: '' },
-            setFormData: jest.fn(),
+            setFormData: vi.fn(),
             isLoading: false,
             error: null,
             isAuthenticated: false,
-            handleEmailLogin: jest.fn(),
-            handleSocialLogin: jest.fn(),
+            handleEmailLogin: vi.fn(),
+            handleSocialLogin: vi.fn(),
             getRedirectUrl,
           };
         };
@@ -317,13 +317,13 @@ describe('useLogin Hook Tests', () => {
         return function useLogin() {
           return {
             formData: { email: '', password: '' },
-            setFormData: jest.fn(),
+            setFormData: vi.fn(),
             isLoading: true, // Set loading state
             error: null,
             isAuthenticated: false,
-            handleEmailLogin: jest.fn(),
-            handleSocialLogin: jest.fn(),
-            getRedirectUrl: jest.fn(() => '/settings/profile'),
+            handleEmailLogin: vi.fn(),
+            handleSocialLogin: vi.fn(),
+            getRedirectUrl: vi.fn(() => '/settings/profile'),
           };
         };
       }
@@ -342,13 +342,13 @@ describe('useLogin Hook Tests', () => {
         return function useLogin() {
           return {
             formData: { email: '', password: '' },
-            setFormData: jest.fn(),
+            setFormData: vi.fn(),
             isLoading: false,
             error: errorMessage, // Set error state
             isAuthenticated: false,
-            handleEmailLogin: jest.fn(),
-            handleSocialLogin: jest.fn(),
-            getRedirectUrl: jest.fn(() => '/settings/profile'),
+            handleEmailLogin: vi.fn(),
+            handleSocialLogin: vi.fn(),
+            getRedirectUrl: vi.fn(() => '/settings/profile'),
           };
         };
       }
@@ -365,13 +365,13 @@ describe('useLogin Hook Tests', () => {
         return function useLogin() {
           return {
             formData: { email: '', password: '' },
-            setFormData: jest.fn(),
+            setFormData: vi.fn(),
             isLoading: false,
             error: null,
             isAuthenticated: true, // Set authenticated state
-            handleEmailLogin: jest.fn(),
-            handleSocialLogin: jest.fn(),
-            getRedirectUrl: jest.fn(() => '/settings/profile'),
+            handleEmailLogin: vi.fn(),
+            handleSocialLogin: vi.fn(),
+            getRedirectUrl: vi.fn(() => '/settings/profile'),
           };
         };
       }

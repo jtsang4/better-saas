@@ -1,4 +1,4 @@
-import { describe, it, expect, jest, beforeEach, afterEach } from '@jest/globals';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 // Mock user type
 interface User {
@@ -92,10 +92,10 @@ describe('Authentication State Management Tests', () => {
     authStore = createAuthStore();
 
     // Mock Date.now
-    const mockDateNow = jest.fn(() => 1640995200000);
+    const mockDateNow = vi.fn(() => 1640995200000);
     (Date as any).now = mockDateNow;
 
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   afterEach(() => {

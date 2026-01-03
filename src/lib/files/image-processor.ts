@@ -80,3 +80,17 @@ export function validateImageFile(file: File): { valid: boolean; error?: string 
 
   return { valid: true };
 }
+
+export type RuntimePlatform = 'node' | 'vercel-serverless' | 'unknown';
+
+export function detectPlatform(): RuntimePlatform {
+  if (typeof process !== 'undefined' && process.versions?.node) {
+    if (process.env?.VERCEL) {
+      return 'vercel-serverless';
+    }
+
+    return 'node';
+  }
+
+  return 'unknown';
+}

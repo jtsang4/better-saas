@@ -15,6 +15,7 @@ import {
   MockLocation,
   MockToastMessages,
 } from './mock-factories';
+import { vi } from 'vitest';
 
 // =============================================================================
 // Global Mock State Management
@@ -60,19 +61,19 @@ export function resetGlobalMocks(): void {
   if (globalMockState) {
     // Reset all mock functions
     Object.values(globalMockState.authStore).forEach(value => {
-      if (jest.isMockFunction(value)) {
+      if (vi.isMockFunction(value)) {
         value.mockReset();
       }
     });
 
     Object.values(globalMockState.router).forEach(value => {
-      if (jest.isMockFunction(value)) {
+      if (vi.isMockFunction(value)) {
         value.mockReset();
       }
     });
 
     Object.values(globalMockState.location).forEach(value => {
-      if (jest.isMockFunction(value)) {
+      if (vi.isMockFunction(value)) {
         value.mockReset();
       }
     });
@@ -94,7 +95,7 @@ export function resetGlobalMocks(): void {
 export function setupAuthStoreMock(): void {
   const mocks = getGlobalMocks();
   
-  jest.mock('@/store/auth-store', () => ({
+  vi.doMock('@/store/auth-store', () => ({
     useAuthLoading: () => mocks.authStore.isLoading,
     useAuthError: () => mocks.authStore.error,
     useIsAuthenticated: () => mocks.authStore.isAuthenticated,
@@ -116,11 +117,11 @@ export function setupAuthStoreMock(): void {
 export function setupNavigationMock(): void {
   const mocks = getGlobalMocks();
 
-  jest.mock('next/navigation', () => ({
+  vi.doMock('next/navigation', () => ({
     useRouter: () => mocks.router,
     usePathname: () => mocks.location.pathname,
     useSearchParams: () => ({
-      get: jest.fn((key: string) => {
+      get: vi.fn((key: string) => {
         const params = new URLSearchParams(mocks.location.search);
         return params.get(key);
       }),
@@ -132,7 +133,7 @@ export function setupNavigationMock(): void {
  * 设置 Next-intl Mock
  */
 export function setupIntlMock(locale: string = 'en'): void {
-  jest.mock('next-intl', () => ({
+  vi.doMock('next-intl', () => ({
     useLocale: () => locale,
     useTranslations: () => (key: string) => key,
   }));
@@ -144,7 +145,7 @@ export function setupIntlMock(locale: string = 'en'): void {
 export function setupToastMessagesMock(): void {
   const mocks = getGlobalMocks();
 
-  jest.mock('@/hooks/use-toast-messages', () => ({
+  vi.doMock('@/hooks/use-toast-messages', () => ({
     useToastMessages: () => mocks.toastMessages,
   }));
 }
@@ -153,19 +154,19 @@ export function setupToastMessagesMock(): void {
  * 设置 SWR Mock
  */
 export function setupSWRMock(): void {
-  const mockUseSWR = jest.fn();
-  const mockUseSWRMutation = jest.fn();
+  const mockUseSWR = vi.fn();
+  const mockUseSWRMutation = vi.fn();
 
   // Default implementations
   mockUseSWR.mockReturnValue(createMockSWRResult());
   mockUseSWRMutation.mockReturnValue(createMockSWRMutationResult());
 
-  jest.mock('swr', () => ({
+  vi.doMock('swr', () => ({
     __esModule: true,
     default: mockUseSWR,
   }));
 
-  jest.mock('swr/mutation', () => ({
+  vi.doMock('swr/mutation', () => ({
     __esModule: true,
     default: mockUseSWRMutation,
   }));
@@ -192,15 +193,15 @@ export function setupBrowserAPIMock(): void {
   // Mock window.matchMedia
   Object.defineProperty(window, 'matchMedia', {
     writable: true,
-    value: jest.fn().mockImplementation(query => ({
+    value: vi.fn().mockImplementation(query => ({
       matches: false,
       media: query,
       onchange: null,
-      addListener: jest.fn(),
-      removeListener: jest.fn(),
-      addEventListener: jest.fn(),
-      removeEventListener: jest.fn(),
-      dispatchEvent: jest.fn(),
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      dispatchEvent: vi.fn(),
     })),
   });
 
@@ -275,7 +276,7 @@ export function setupTestEnvironment(options: {
  */
 export function cleanupTestEnvironment(): void {
   resetGlobalMocks();
-  jest.clearAllMocks();
+  vi.clearAllMocks();
 }
 
 // =============================================================================

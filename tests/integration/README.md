@@ -1,4 +1,4 @@
-z'z# Integration Tests
+# Integration Tests
 
 This directory contains integration tests for the Better SaaS application. Integration tests verify that different components of the system work together correctly.
 
@@ -90,14 +90,14 @@ pnpm test:integration
 ### Specific Test Files
 ```bash
 # API tests
-pnpm jest tests/integration/api/health.test.ts
-pnpm jest tests/integration/api/payment-api.test.ts
+pnpm vitest tests/integration/api/health.test.ts
+pnpm vitest tests/integration/api/payment-api.test.ts
 
 # Service tests
-pnpm jest tests/integration/services/auth-service.test.ts
+pnpm vitest tests/integration/services/auth-service.test.ts
 
 # Database tests
-pnpm jest tests/integration/database/user-operations.test.ts
+pnpm vitest tests/integration/database/user-operations.test.ts
 ```
 
 ### Test Environment
@@ -109,12 +109,12 @@ Integration tests use:
 
 ## Test Configuration
 
-### Jest Setup
+### Vitest Setup
 - **Environment**: jsdom (with Node.js polyfills)
 - **Timeout**: 30 seconds for integration tests
 - **Setup Files**: 
-  - `tests/setup/jest.setup.js` - Global test setup
-  - `tests/setup/performance-polyfill.js` - Performance API polyfills
+  - `tests/setup/vitest.setup.ts` - Global test setup
+  - `tests/setup/global-polyfills.js` - Web API polyfills
 
 ### Database Setup
 - **Driver**: Neon HTTP driver for serverless compatibility
@@ -202,6 +202,6 @@ When adding new integration tests:
 
 For questions about integration tests:
 - Check existing test files for examples
-- Review Jest configuration in `jest.config.js`
+- Review Vitest configuration in `vitest.config.ts`
 - Check test setup files in `tests/setup/`
 - Refer to project documentation 

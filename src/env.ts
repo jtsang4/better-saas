@@ -26,6 +26,11 @@ export const env = createEnv({
     ADMIN_EMAILS: z.string().optional().default(''),
     // Cron Security
     CRON_SECRET: z.string(),
+    // AI Provider Configuration
+    OPENAI_API_KEY: z.string().optional(),
+    OPENAI_BASE_URL: z.string().url().optional(),
+    GEMINI_API_KEY: z.string().optional(),
+    GEMINI_BASE_URL: z.string().url().optional(),
   },
 
   /**
@@ -63,6 +68,11 @@ export const env = createEnv({
     ADMIN_EMAILS: process.env.ADMIN_EMAILS,
     // Cron Security
     CRON_SECRET: process.env.CRON_SECRET,
+    // AI Provider Configuration
+    OPENAI_API_KEY: process.env.OPENAI_API_KEY,
+    OPENAI_BASE_URL: process.env.OPENAI_BASE_URL,
+    GEMINI_API_KEY: process.env.GEMINI_API_KEY,
+    GEMINI_BASE_URL: process.env.GEMINI_BASE_URL,
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   },
   /**

@@ -889,7 +889,7 @@ export function FormattedTime({ date, format = 'short' }: FormattedTimeProps) {
 ### Internationalization Middleware
 
 ```typescript
-// src/middleware.ts
+// src/proxy.ts
 import createMiddleware from 'next-intl/middleware'
 import { routing } from './i18n/routing'
 
@@ -947,38 +947,6 @@ describe('LanguageSwitcher', () => {
     )
 
     // Test current locale display
-  })
-})
-```
-
-### E2E Tests
-
-```typescript
-// tests/e2e/i18n.spec.ts
-import { test, expect } from '@playwright/test'
-
-test.describe('Internationalization', () => {
-  test('should switch languages', async ({ page }) => {
-    await page.goto('/')
-    
-    // Check default language
-    await expect(page.locator('h1')).toContainText('Welcome')
-    
-    // Switch to Chinese
-    await page.click('[data-testid="language-switcher"]')
-    await page.click('[data-testid="language-zh"]')
-    
-    // Verify language changed
-    await expect(page.locator('h1')).toContainText('欢迎')
-    await expect(page.url()).toContain('/zh')
-  })
-
-  test('should persist language preference', async ({ page }) => {
-    await page.goto('/zh')
-    await page.reload()
-    
-    // Should stay in Chinese
-    await expect(page.url()).toContain('/zh')
   })
 })
 ```

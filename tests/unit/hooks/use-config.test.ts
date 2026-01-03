@@ -1,13 +1,21 @@
-import { describe, it, expect, jest, beforeEach } from '@jest/globals';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook } from '@testing-library/react';
+import { useLocale } from 'next-intl';
+import {
+  appConfig,
+  featuresConfig,
+  i18nConfig,
+  themeConfig,
+  paymentConfig,
+} from '../../../src/config';
 
 // Mock next-intl
-jest.mock('next-intl', () => ({
+vi.mock('next-intl', () => ({
   useLocale: () => 'en',
 }));
 
 // Mock config modules
-const mockAppConfig = {
+const mockAppConfig = vi.hoisted(() => ({
   name: 'Better SaaS',
   description: 'A modern SaaS application',
   version: '1.0.0',
@@ -18,9 +26,9 @@ const mockAppConfig = {
     auth: true,
     payments: true,
   },
-};
+}));
 
-const mockFeaturesConfig = {
+const mockFeaturesConfig = vi.hoisted(() => ({
   auth: {
     enabled: true,
     providers: {
@@ -38,19 +46,19 @@ const mockFeaturesConfig = {
     enabled: true,
     maxFileSize: 10 * 1024 * 1024,
   },
-};
+}));
 
-const mockI18nConfig = {
+const mockI18nConfig = vi.hoisted(() => ({
   locales: ['en', 'zh'],
   defaultLocale: 'en',
-};
+}));
 
-const mockThemeConfig = {
+const mockThemeConfig = vi.hoisted(() => ({
   defaultTheme: 'light',
   themes: ['light', 'dark', 'system'],
-};
+}));
 
-const mockPaymentConfig = {
+const mockPaymentConfig = vi.hoisted(() => ({
   stripe: {
     secretKey: 'sk_test_123',
     webhookSecret: 'whsec_test_123',
@@ -70,9 +78,9 @@ const mockPaymentConfig = {
       interval: 'month',
     },
   ],
-};
+}));
 
-jest.mock('../../../src/config', () => ({
+vi.mock('../../../src/config', () => ({
   appConfig: mockAppConfig,
   featuresConfig: mockFeaturesConfig,
   i18nConfig: mockI18nConfig,
@@ -83,39 +91,34 @@ jest.mock('../../../src/config', () => ({
 // Create simple implementations for testing
 function createUseAppConfig() {
   return function useAppConfig() {
-    const config = require('../../../src/config');
-    return config.appConfig;
+    return appConfig;
   };
 }
 
 function createUseFeaturesConfig() {
   return function useFeaturesConfig() {
-    const config = require('../../../src/config');
-    return config.featuresConfig;
+    return featuresConfig;
   };
 }
 
 function createUseI18nConfig() {
   return function useI18nConfig() {
-    const config = require('../../../src/config');
-    return config.i18nConfig;
+    return i18nConfig;
   };
 }
 
 function createUseThemeConfig() {
   return function useThemeConfig() {
-    const config = require('../../../src/config');
-    return config.themeConfig;
+    return themeConfig;
   };
 }
 
 function createUsePaymentConfig() {
   return function usePaymentConfig() {
-    const config = require('../../../src/config');
-    const locale = require('next-intl').useLocale();
+    const locale = useLocale();
     
     return {
-      ...config.paymentConfig,
+      ...paymentConfig,
       locale,
     };
   };
@@ -129,7 +132,7 @@ describe('Config Hooks Tests', () => {
   let usePaymentConfig: ReturnType<typeof createUsePaymentConfig>;
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     useAppConfig = createUseAppConfig();
     useFeaturesConfig = createUseFeaturesConfig();
     useI18nConfig = createUseI18nConfig();

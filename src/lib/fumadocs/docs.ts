@@ -1,14 +1,29 @@
 import { docs } from '@/.source';
 import { loader } from 'fumadocs-core/source';
-import type { InferMetaType, InferPageType } from 'fumadocs-core/source';
+import type { InferMetaType, InferPageType, VirtualFile } from 'fumadocs-core/source';
+import type { TOCItemType } from 'fumadocs-core/toc';
+import type { ComponentType } from 'react';
+import { normalizeSourceFiles } from './source-utils';
+
+const docsSourceFiles = normalizeSourceFiles(
+  docs.toFumadocsSource() as unknown as { files: VirtualFile[] | (() => VirtualFile[]) }
+);
 
 export const docsSource = loader({
   baseUrl: '/docs',
-  source: docs.toFumadocsSource(),
+  source: { files: docsSourceFiles },
 });
 
 export type DocsMeta = InferMetaType<typeof docsSource>;
-export type DocsPage = InferPageType<typeof docsSource>;
+type DocsPageData = Record<string, unknown> & {
+  body: ComponentType<{ components?: Record<string, unknown> }>;
+  toc?: TOCItemType[];
+  full?: boolean;
+  title?: string;
+  description?: string;
+};
+
+export type DocsPage = Omit<InferPageType<typeof docsSource>, 'data'> & { data: DocsPageData };
 
 interface DocsFrontmatter {
   title: string;
@@ -37,16 +52,11 @@ export interface DocsTreeItem {
 function getMetaConfigFromSource(locale: string, folderPath = ''): MetaConfig | null {
   try {
     // Access the compiled meta data from .source/index.ts
-    const sourceData = docs.toFumadocsSource();
-    
     // Build the expected meta path
     const metaPath = folderPath ? `${locale}/${folderPath}/meta.json` : `${locale}/meta.json`;
     
     // Find the meta file in the source data
-    const metaFiles = Array.isArray(sourceData.files) ? sourceData.files : sourceData.files();
-    const metaFile = metaFiles.find(file => 
-      file.path === metaPath && file.type === 'meta'
-    );
+    const metaFile = docsSourceFiles.find((file) => file.path === metaPath && file.type === 'meta');
     
     if (metaFile?.data) {
       return metaFile.data as MetaConfig;
@@ -60,7 +70,7 @@ function getMetaConfigFromSource(locale: string, folderPath = ''): MetaConfig | 
 }
 
 export function getDocsPages(locale = 'en'): DocsPage[] {
-  const allPages = docsSource.getPages();
+  const allPages = docsSource.getPages() as DocsPage[];
   
   const filteredPages = allPages.filter((page) => {
     const urlParts = page.url.split('/');
@@ -119,7 +129,7 @@ export function getDocsPages(locale = 'en'): DocsPage[] {
 
 export function getDocsPage(slug: string[], locale = 'en'): DocsPage | undefined {
   const fullSlug = [locale, ...slug];
-  return docsSource.getPage(fullSlug);
+  return docsSource.getPage(fullSlug) as DocsPage | undefined;
 }
 
 export function getDocsPageTree(locale = 'en') {
@@ -200,4 +210,3 @@ export function buildDocsTree(locale = 'en'): DocsTreeItem[] {
 
   return tree;
 }
-

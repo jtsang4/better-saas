@@ -21,10 +21,9 @@ better-saas/
 ├── biome.jsonc                  # 代码格式化和检查配置
 ├── components.json              # Shadcn/ui 组件配置
 ├── drizzle.config.ts           # 数据库 ORM 配置
-├── jest.config.js              # Jest 测试配置
+├── vitest.config.ts            # Vitest 测试配置
 ├── next.config.ts              # Next.js 配置
 ├── package.json                # 依赖和脚本
-├── playwright.config.ts        # E2E 测试配置
 ├── postcss.config.js           # PostCSS 配置
 ├── README.md                   # 项目文档
 ├── source.config.ts            # Fumadocs 配置
@@ -243,11 +242,6 @@ src/content/
 ```
 tests/
 ├── __mocks__/                # 模拟文件
-├── e2e/                      # 端到端测试
-│   ├── auth/
-│   ├── dashboard/
-│   ├── payment/
-│   └── fixtures/
 ├── integration/              # 集成测试
 │   ├── api/
 │   ├── database/
@@ -270,7 +264,7 @@ tests/
 
 ### API 路由
 - **路由文件**: 目录结构中的 `route.ts`
-- **中间件**: `middleware.ts`
+- **代理**: `proxy.ts`
 - **服务器操作**: kebab-case 带 `-actions` 后缀
 
 ### 配置
@@ -428,10 +422,11 @@ RESEND_API_KEY=...
     "lint": "biome check .",
     "lint:fix": "biome check . --apply",
     "type-check": "tsc --noEmit",
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:integration": "jest --config=jest.integration.config.js",
-    "test:e2e": "playwright test",
+    "test": "vitest",
+    "test:unit": "vitest tests/unit",
+    "test:integration": "vitest tests/integration",
+    "test:coverage": "vitest --coverage",
+    "test:ui": "vitest --ui",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio"

@@ -5,18 +5,18 @@ export const navbarConfig: NavbarConfig = {
   logo: {
     url: '/',
     src: '/icons/apple-touch-icon.png',
-    alt: 'logo.alt', // i18n key (navbar. prefix will be added by useTranslations)
-    title: 'logo.title', // i18n key
+    alt: 'logo.alt',
+    title: 'logo.title',
   },
 
   // Authentication configuration
   auth: {
     login: {
-      text: 'auth.login', // i18n key
+      text: 'auth.login',
       url: '/login'
     },
     signup: {
-      text: 'auth.signup', // i18n key
+      text: 'auth.signup',
       url: '/signup'
     },
   },
@@ -25,47 +25,47 @@ export const navbarConfig: NavbarConfig = {
   menu: {
     items: [
       {
-        title: 'menu.blog', // i18n key
-        url: '/blog' // Will be prefixed with locale in hook
+        title: 'menu.blog',
+        url: '/blog'
       },
       {
-        title: 'menu.document', // i18n key
+        title: 'menu.document',
         url: '/docs',
       },
       {
-        title: 'menu.components', // i18n key
+        title: 'menu.components',
         url: '/blocks',
       },
       {
-        title: 'menu.pricing', // i18n key
+        title: 'menu.pricing',
         url: '#pricing',
         onClick: 'handlePricingClick', // Special handler
       },
       {
-        title: 'menu.resources', // i18n key
+        title: 'menu.resources',
         url: '#',
         items: [
           {
-            title: 'menu.helpCenter', // i18n key
-            description: 'menu.helpCenterDescription', // i18n key
+            title: 'menu.helpCenter',
+            description: 'menu.helpCenterDescription',
             url: '#',
             icon: 'Zap',
           },
           {
-            title: 'menu.contactUs', // i18n key
-            description: 'menu.contactUsDescription', // i18n key
+            title: 'menu.contactUs',
+            description: 'menu.contactUsDescription',
             url: '#',
             icon: 'Sunset',
           },
           {
-            title: 'menu.status', // i18n key
-            description: 'menu.statusDescription', // i18n key
+            title: 'menu.status',
+            description: 'menu.statusDescription',
             url: '#',
             icon: 'Trees',
           },
           {
-            title: 'menu.termsOfService', // i18n key
-            description: 'menu.termsOfServiceDescription', // i18n key
+            title: 'menu.termsOfService',
+            description: 'menu.termsOfServiceDescription',
             url: '#',
             icon: 'Book',
           },

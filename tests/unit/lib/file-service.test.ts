@@ -1,56 +1,53 @@
-import { describe, it, expect, jest, beforeEach, afterEach } from '@jest/globals';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 // Mock crypto.randomUUID
 Object.defineProperty(global, 'crypto', {
   value: {
-    randomUUID: jest.fn(() => 'mock-uuid-1234'),
+    randomUUID: vi.fn(() => 'mock-uuid-1234'),
   },
 });
 
 // Mock the dependencies first
-jest.mock('@/lib/r2-client', () => ({
+vi.mock('@/lib/r2-client', () => ({
   R2_BUCKET_NAME: 'test-bucket',
   R2_PUBLIC_URL: 'https://cdn.example.com',
   r2Client: {},
 }));
 
-jest.mock('@/server/db/repositories', () => ({
+vi.mock('@/server/db/repositories', () => ({
   fileRepository: {},
 }));
 
-jest.mock('@/lib/logger/logger-utils', () => ({
-  ErrorLogger: jest.fn().mockImplementation(() => ({
-    logError: jest.fn(),
+vi.mock('@/lib/logger/logger-utils', () => ({
+  ErrorLogger: vi.fn().mockImplementation(() => ({
+    logError: vi.fn(),
   })),
 }));
 
 // Mock image-processor to avoid dependency issues
-jest.mock('@/lib/image-processor', () => ({
-  generateThumbnail: jest.fn(() => Promise.resolve(Buffer.from('thumbnail-data'))),
-  getImageMetadata: jest.fn(() => Promise.resolve({ width: 800, height: 600 })),
-  validateImageFile: jest.fn(() => ({ valid: true })),
+vi.mock('@/lib/image-processor', () => ({
+  generateThumbnail: vi.fn(() => Promise.resolve(Buffer.from('thumbnail-data'))),
+  getImageMetadata: vi.fn(() => Promise.resolve({ width: 800, height: 600 })),
+  validateImageFile: vi.fn(() => ({ valid: true })),
 }));
 
 // Mock mime-types
-jest.mock('mime-types', () => ({
-  lookup: jest.fn(),
+vi.mock('mime-types', () => ({
+  lookup: vi.fn(),
 }));
 
 // Mock AWS SDK
-jest.mock('@aws-sdk/client-s3', () => ({
-  DeleteObjectCommand: jest.fn(),
-  GetObjectCommand: jest.fn(),
-  PutObjectCommand: jest.fn(),
+vi.mock('@aws-sdk/client-s3', () => ({
+  DeleteObjectCommand: vi.fn(),
+  GetObjectCommand: vi.fn(),
+  PutObjectCommand: vi.fn(),
 }));
 
-jest.mock('@aws-sdk/s3-request-presigner', () => ({
-  getSignedUrl: jest.fn(),
+vi.mock('@aws-sdk/s3-request-presigner', () => ({
+  getSignedUrl: vi.fn(),
 }));
 
 describe('File Service Tests', () => {
-  let originalDate: DateConstructor;
-  let mockDateNow: jest.Mock;
-
   // Simple implementations to test
   function generateR2Key(filename: string, type: 'original' | 'thumbnail' = 'original'): string {
     const date = new Date();
@@ -91,25 +88,14 @@ describe('File Service Tests', () => {
   }
 
   beforeEach(() => {
-    jest.clearAllMocks();
-    
-    // Store original Date
-    originalDate = global.Date;
-    
-    // Mock Date.now to return a fixed timestamp
-    mockDateNow = jest.fn(() => 1640995200000); // 2022-01-01 00:00:00
-    
-    // Mock Date constructor to return a fixed date
-    const MockDate = jest.fn(() => new originalDate('2022-01-01T00:00:00.000Z')) as any;
-    MockDate.now = mockDateNow;
-    MockDate.prototype = originalDate.prototype;
-    
-    global.Date = MockDate;
+    vi.clearAllMocks();
+
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2022-01-01T00:00:00.000Z'));
   });
 
   afterEach(() => {
-    // Restore original Date
-    global.Date = originalDate;
+    vi.useRealTimers();
   });
 
   describe('generateR2Key', () => {
@@ -126,11 +112,7 @@ describe('File Service Tests', () => {
     });
 
     it('should handle different months', () => {
-      // Mock December date
-      const MockDecemberDate = jest.fn(() => new originalDate('2022-12-15T00:00:00.000Z')) as any;
-      MockDecemberDate.now = mockDateNow;
-      MockDecemberDate.prototype = originalDate.prototype;
-      global.Date = MockDecemberDate;
+      vi.setSystemTime(new Date('2022-12-15T00:00:00.000Z'));
 
       const filename = 'test-image.jpg';
       const key = generateR2Key(filename);

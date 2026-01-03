@@ -1,7 +1,6 @@
-import { describe, it, expect, jest, beforeEach, afterEach } from '@jest/globals';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import React from 'react';
-import '@testing-library/jest-dom';
 import {
   setupTestEnvironment,
   cleanupTestEnvironment,
@@ -313,7 +312,7 @@ describe('AdminGuard Component Tests', () => {
       const regularUser = createMockUser({ role: 'user' });
       mocks.authStore.user = regularUser;
 
-      const mockConsoleLog = jest.spyOn(console, 'log').mockImplementation(() => {});
+      const mockConsoleLog = vi.spyOn(console, 'log').mockImplementation(() => {});
 
       const ChildWithSideEffect = () => {
         console.log('Child component rendered');
@@ -336,7 +335,7 @@ describe('AdminGuard Component Tests', () => {
       const adminUser = createMockUser({ role: 'admin' });
       mocks.authStore.user = adminUser;
 
-      const mockConsoleLog = jest.spyOn(console, 'log').mockImplementation(() => {});
+      const mockConsoleLog = vi.spyOn(console, 'log').mockImplementation(() => {});
 
       const ChildWithSideEffect = () => {
         console.log('Child component rendered');

@@ -3,71 +3,71 @@
  * Tests payment-related functionality including subscription management
  */
 
-import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 
 // Mock Stripe for testing
 const mockStripe = {
   customers: {
-    create: jest.fn(),
-    retrieve: jest.fn(),
-    update: jest.fn(),
+    create: vi.fn(),
+    retrieve: vi.fn(),
+    update: vi.fn(),
   },
   subscriptions: {
-    create: jest.fn(),
-    retrieve: jest.fn(),
-    update: jest.fn(),
-    cancel: jest.fn(),
-    list: jest.fn(),
+    create: vi.fn(),
+    retrieve: vi.fn(),
+    update: vi.fn(),
+    cancel: vi.fn(),
+    list: vi.fn(),
   },
   paymentMethods: {
-    attach: jest.fn(),
-    detach: jest.fn(),
-    list: jest.fn(),
+    attach: vi.fn(),
+    detach: vi.fn(),
+    list: vi.fn(),
   },
   invoices: {
-    list: jest.fn(),
-    retrieve: jest.fn(),
+    list: vi.fn(),
+    retrieve: vi.fn(),
   },
   prices: {
-    list: jest.fn(),
-    retrieve: jest.fn(),
+    list: vi.fn(),
+    retrieve: vi.fn(),
   },
   products: {
-    list: jest.fn(),
-    retrieve: jest.fn(),
+    list: vi.fn(),
+    retrieve: vi.fn(),
   },
 };
 
 // Mock payment actions
 const mockPaymentActions = {
-  createSubscription: jest.fn(),
-  cancelSubscription: jest.fn(),
-  getBillingInfo: jest.fn(),
-  syncSubscriptionPeriods: jest.fn(),
+  createSubscription: vi.fn(),
+  cancelSubscription: vi.fn(),
+  getBillingInfo: vi.fn(),
+  syncSubscriptionPeriods: vi.fn(),
 };
 
 // Mock database
 const mockDb = {
   user: {
-    findFirst: jest.fn(),
-    update: jest.fn(),
+    findFirst: vi.fn(),
+    update: vi.fn(),
   },
   subscription: {
-    create: jest.fn(),
-    findFirst: jest.fn(),
-    update: jest.fn(),
-    delete: jest.fn(),
+    create: vi.fn(),
+    findFirst: vi.fn(),
+    update: vi.fn(),
+    delete: vi.fn(),
   },
   payment: {
-    create: jest.fn(),
-    findMany: jest.fn(),
+    create: vi.fn(),
+    findMany: vi.fn(),
   },
 };
 
 describe('Payment API Integration Tests', () => {
   beforeEach(() => {
     // Reset all mocks
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     
     // Set up default mock implementations
     mockStripe.customers.create.mockResolvedValue({
@@ -112,7 +112,7 @@ describe('Payment API Integration Tests', () => {
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('Subscription Creation', () => {

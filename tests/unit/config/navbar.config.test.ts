@@ -8,15 +8,15 @@ describe('Navbar Configuration', () => {
       expect(navbarConfig.logo).toBeDefined();
       expect(navbarConfig.logo.url).toBe('/');
       expect(navbarConfig.logo.src).toBe('/icons/apple-touch-icon.png');
-      expect(navbarConfig.logo.alt).toBe('logo');
-      expect(navbarConfig.logo.title).toBe('Better SaaS');
+      expect(navbarConfig.logo.alt).toBe('logo.alt');
+      expect(navbarConfig.logo.title).toBe('logo.title');
     });
 
     it('should have valid auth configuration', () => {
       expect(navbarConfig.auth).toBeDefined();
-      expect(navbarConfig.auth.login.text).toBe('Log in');
+      expect(navbarConfig.auth.login.text).toBe('auth.login');
       expect(navbarConfig.auth.login.url).toBe('/login');
-      expect(navbarConfig.auth.signup.text).toBe('Sign up');
+      expect(navbarConfig.auth.signup.text).toBe('auth.signup');
       expect(navbarConfig.auth.signup.url).toBe('/signup');
     });
 
@@ -36,14 +36,14 @@ describe('Navbar Configuration', () => {
     });
 
     it('should have Resources menu with sub-items', () => {
-      const resourcesMenu = navbarConfig.menu.items.find(item => item.title === 'Resources');
+      const resourcesMenu = navbarConfig.menu.items.find(item => item.title === 'menu.resources');
       expect(resourcesMenu).toBeDefined();
       expect(resourcesMenu?.items).toBeDefined();
       expect(resourcesMenu?.items?.length).toBeGreaterThan(0);
     });
 
     it('should have sub-items with icons', () => {
-      const resourcesMenu = navbarConfig.menu.items.find(item => item.title === 'Resources');
+      const resourcesMenu = navbarConfig.menu.items.find(item => item.title === 'menu.resources');
       resourcesMenu?.items?.forEach(subItem => {
         expect(subItem.icon).toBeDefined();
         expect(typeof subItem.icon).toBe('string');
@@ -51,7 +51,7 @@ describe('Navbar Configuration', () => {
     });
 
     it('should have Pricing menu with special onClick handler', () => {
-      const pricingMenu = navbarConfig.menu.items.find(item => item.title === 'Pricing');
+      const pricingMenu = navbarConfig.menu.items.find(item => item.title === 'menu.pricing');
       expect(pricingMenu).toBeDefined();
       expect(pricingMenu?.onClick).toBe('handlePricingClick');
     });

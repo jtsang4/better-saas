@@ -1,4 +1,4 @@
-import { describe, it, expect } from '@jest/globals';
+import { describe, it, expect } from 'vitest';
 
 // Mock Next.js API route handler
 function createMockRequest(method: string, url: string, body?: any) {

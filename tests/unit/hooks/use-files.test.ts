@@ -1,4 +1,4 @@
-import { describe, it, expect, jest, beforeEach, afterEach } from '@jest/globals';
+import { describe, it, expect, vi, beforeEach, afterEach, type Mock } from 'vitest';
 import { renderHook, act, waitFor } from '@testing-library/react';
 import {
   setupTestEnvironment,
@@ -48,9 +48,9 @@ function createUseFiles() {
       isLoading: swrResult?.isLoading || false,
       isUploading: uploadMutation?.isMutating || false,
       isDeleting: deleteMutation?.isMutating || false,
-      uploadFile: uploadMutation?.trigger || jest.fn(),
-      deleteFile: deleteMutation?.trigger || jest.fn(),
-      refresh: () => swrResult?.mutate?.() || jest.fn()(),
+      uploadFile: uploadMutation?.trigger || vi.fn(),
+      deleteFile: deleteMutation?.trigger || vi.fn(),
+      refresh: () => swrResult?.mutate?.() || vi.fn()(),
     };
   };
 }
@@ -58,8 +58,8 @@ function createUseFiles() {
 describe('useFiles Hook Tests', () => {
   let useFiles: ReturnType<typeof createUseFiles>;
   let mocks: ReturnType<typeof getGlobalMocks>;
-  let mockUseSWR: jest.Mock;
-  let mockUseSWRMutation: jest.Mock;
+  let mockUseSWR: Mock;
+  let mockUseSWRMutation: Mock;
 
   beforeEach(() => {
     // Setup test environment with new mock strategy
@@ -171,7 +171,7 @@ describe('useFiles Hook Tests', () => {
   describe('File Upload', () => {
     it('should handle file upload', async () => {
       const mockFile = new File(['content'], 'test.jpg', { type: 'image/jpeg' });
-      const mockTrigger = (jest.fn() as any).mockResolvedValue({ success: true });
+      const mockTrigger = (vi.fn() as any).mockResolvedValue({ success: true });
        
        mockUseSWRMutation.mockReturnValue(createMockSWRMutationResult({
          trigger: mockTrigger as any,
@@ -199,7 +199,7 @@ describe('useFiles Hook Tests', () => {
 
     it('should handle upload error', async () => {
       const mockFile = new File(['content'], 'test.jpg', { type: 'image/jpeg' });
-      const mockTrigger = (jest.fn() as any).mockRejectedValue(new Error('Upload failed'));
+      const mockTrigger = (vi.fn() as any).mockRejectedValue(new Error('Upload failed'));
        
        mockUseSWRMutation.mockReturnValue(createMockSWRMutationResult({
          trigger: mockTrigger as any,
@@ -214,7 +214,7 @@ describe('useFiles Hook Tests', () => {
 
   describe('File Deletion', () => {
     it('should handle file deletion', async () => {
-      const mockTrigger = (jest.fn() as any).mockResolvedValue({ success: true });
+      const mockTrigger = (vi.fn() as any).mockResolvedValue({ success: true });
       
       // Return different mutations for upload and delete
       mockUseSWRMutation.mockImplementation(((key: string) => {
@@ -253,7 +253,7 @@ describe('useFiles Hook Tests', () => {
     });
 
     it('should handle deletion error', async () => {
-      const mockTrigger = (jest.fn() as any).mockRejectedValue(new Error('Delete failed'));
+      const mockTrigger = (vi.fn() as any).mockRejectedValue(new Error('Delete failed'));
       
       // Return different mutations for upload and delete
       mockUseSWRMutation.mockImplementation(((key: string) => {
@@ -274,7 +274,7 @@ describe('useFiles Hook Tests', () => {
 
   describe('Data Refresh', () => {
     it('should handle data refresh', () => {
-      const mockMutate = jest.fn();
+      const mockMutate = vi.fn();
       
       mockUseSWR.mockReturnValue(createMockSWRResult({
         data: mockFileData,
@@ -373,7 +373,7 @@ describe('useFiles Hook Tests', () => {
     });
 
     it('should handle rapid consecutive calls', async () => {
-      const mockTrigger = (jest.fn() as any).mockResolvedValue({ success: true });
+      const mockTrigger = (vi.fn() as any).mockResolvedValue({ success: true });
       
       mockUseSWRMutation.mockReturnValue(createMockSWRMutationResult({
         trigger: mockTrigger,

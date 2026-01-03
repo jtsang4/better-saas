@@ -4,58 +4,58 @@
  * instead of a full Next.js server to avoid polyfill issues.
  */
 
-import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 
 // Mock file service and storage
 const mockFileService = {
-  uploadFile: jest.fn(),
-  listFiles: jest.fn(),
-  getFile: jest.fn(),
-  deleteFile: jest.fn(),
-  validateFile: jest.fn(),
+  uploadFile: vi.fn(),
+  listFiles: vi.fn(),
+  getFile: vi.fn(),
+  deleteFile: vi.fn(),
+  validateFile: vi.fn(),
 };
 
 // Mock R2 storage client
 const mockR2Client = {
-  upload: jest.fn(),
-  delete: jest.fn(),
-  getUrl: jest.fn(),
-  list: jest.fn(),
+  upload: vi.fn(),
+  delete: vi.fn(),
+  getUrl: vi.fn(),
+  list: vi.fn(),
 };
 
 // Mock database
 const mockDb = {
   file: {
-    create: jest.fn(),
-    findMany: jest.fn(),
-    findFirst: jest.fn(),
-    update: jest.fn(),
-    delete: jest.fn(),
-    count: jest.fn(),
+    create: vi.fn(),
+    findMany: vi.fn(),
+    findFirst: vi.fn(),
+    update: vi.fn(),
+    delete: vi.fn(),
+    count: vi.fn(),
   },
   user: {
-    findFirst: jest.fn(),
+    findFirst: vi.fn(),
   },
 };
 
 // Mock authentication
 const mockAuth = {
-  validateSession: jest.fn(),
-  getUserFromToken: jest.fn(),
+  validateSession: vi.fn(),
+  getUserFromToken: vi.fn(),
 };
 
 // Mock file actions
 const mockFileActions = {
-  uploadFile: jest.fn(),
-  listUserFiles: jest.fn(),
-  getFileDetails: jest.fn(),
-  deleteUserFile: jest.fn(),
+  uploadFile: vi.fn(),
+  listUserFiles: vi.fn(),
+  getFileDetails: vi.fn(),
+  deleteUserFile: vi.fn(),
 };
 
 describe('File Management API Integration Tests', () => {
   beforeEach(() => {
     // Reset all mocks
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     
     // Set up default mock implementations
     mockAuth.validateSession.mockResolvedValue({
@@ -106,7 +106,7 @@ describe('File Management API Integration Tests', () => {
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('POST /api/files/upload', () => {

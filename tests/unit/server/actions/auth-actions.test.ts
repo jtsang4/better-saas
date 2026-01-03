@@ -1,27 +1,27 @@
-import { describe, it, expect, jest, beforeEach } from '@jest/globals';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 // Mock auth module
 const mockAuth = {
   api: {
-    getSession: jest.fn(),
+    getSession: vi.fn(),
   },
 };
 
-jest.mock('@/lib/auth/auth', () => ({
+vi.mock('@/lib/auth/auth', () => ({
   auth: mockAuth,
 }));
 
 // Mock permissions module
-const mockIsAdmin = jest.fn();
+const mockIsAdmin = vi.fn();
 
-jest.mock('@/lib/auth/permissions', () => ({
+vi.mock('@/lib/auth/permissions', () => ({
   isAdmin: mockIsAdmin,
 }));
 
 // Mock headers
-const mockHeaders = jest.fn();
+const mockHeaders = vi.fn();
 
-jest.mock('next/headers', () => ({
+vi.mock('next/headers', () => ({
   headers: mockHeaders,
 }));
 
@@ -68,7 +68,7 @@ async function createGetUserAdminStatus() {
 
 describe('Auth Actions Tests', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     mockHeaders.mockResolvedValue(new Headers());
   });
 
@@ -124,7 +124,7 @@ describe('Auth Actions Tests', () => {
     });
 
     it('should handle auth.api.getSession errors gracefully', async () => {
-      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation();
       mockAuth.api.getSession.mockRejectedValue(new Error('Session fetch failed'));
 
       const result = await createGetUserAdminStatus();
@@ -142,7 +142,7 @@ describe('Auth Actions Tests', () => {
     });
 
     it('should handle headers() errors gracefully', async () => {
-      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation();
       mockHeaders.mockRejectedValue(new Error('Headers not available'));
 
       const result = await createGetUserAdminStatus();
@@ -160,7 +160,7 @@ describe('Auth Actions Tests', () => {
     });
 
     it('should handle isAdmin function errors gracefully', async () => {
-      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation();
       mockAuth.api.getSession.mockResolvedValue(mockUserSession);
       mockIsAdmin.mockImplementation(() => {
         throw new Error('Permission check failed');
@@ -181,7 +181,7 @@ describe('Auth Actions Tests', () => {
     });
 
     it('should handle non-Error exceptions gracefully', async () => {
-      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation();
       mockAuth.api.getSession.mockRejectedValue('String error');
 
       const result = await createGetUserAdminStatus();
@@ -253,7 +253,7 @@ describe('Auth Actions Tests', () => {
 
   describe('Error Logging', () => {
     it('should log only error name and message, not full error object', async () => {
-      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation();
       const complexError = new Error('Complex error');
       complexError.stack = 'Error stack trace...';
       
@@ -277,7 +277,7 @@ describe('Auth Actions Tests', () => {
     });
 
     it('should handle errors without name property', async () => {
-      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation();
       const errorWithoutName = { message: 'Error without name' };
       
       mockAuth.api.getSession.mockRejectedValue(errorWithoutName);
@@ -296,7 +296,7 @@ describe('Auth Actions Tests', () => {
     });
 
     it('should handle errors without message property', async () => {
-      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation();
       const errorWithoutMessage = { name: 'CustomError' };
       
       mockAuth.api.getSession.mockRejectedValue(errorWithoutMessage);
