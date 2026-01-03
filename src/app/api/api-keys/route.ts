@@ -3,7 +3,7 @@ import db from '@/server/db';
 import { apiKey } from '@/server/db/schema';
 import { eq, type InferSelectModel } from 'drizzle-orm';
 import { type NextRequest, NextResponse } from 'next/server';
-import { v4 as uuidv4 } from 'uuid';
+import { v7 as uuidv7 } from 'uuid';
 import bcrypt from 'bcryptjs';
 
 // GET /api/api-keys - 获取用户的API Key列表
@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 生成API Key
-    const keyValue = `bs_${uuidv4().replace(/-/g, '')}`; // bs_ prefix for better-saas
+    const keyValue = `bs_${uuidv7().replace(/-/g, '')}`; // bs_ prefix for better-saas
     const hashedKey = await bcrypt.hash(keyValue, 10);
 
     // 插入数据库
@@ -77,7 +77,7 @@ export async function POST(request: NextRequest) {
     const [newApiKey] = await db
       .insert(apiKey)
       .values({
-        id: uuidv4(),
+        id: uuidv7(),
         name: name.trim(),
         hashedKey,
         userId: session.user.id,

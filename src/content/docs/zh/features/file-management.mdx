@@ -160,7 +160,7 @@ import { db } from '@/server/db'
 import { files, folders } from '@/server/db/schema'
 import { eq, and } from 'drizzle-orm'
 import sharp from 'sharp'
-import { v4 as uuidv4 } from 'uuid'
+import { v7 as uuidv7 } from 'uuid'
 
 export class FileService {
   private static instance: FileService
@@ -193,7 +193,7 @@ export class FileService {
 
     // 生成唯一键
     const fileExtension = file.name.split('.').pop()
-    const key = `${userId}/${uuidv4()}.${fileExtension}`
+    const key = `${userId}/${uuidv7()}.${fileExtension}`
 
     // 转换文件为缓冲区
     const buffer = Buffer.from(await file.arrayBuffer())
@@ -208,7 +208,7 @@ export class FileService {
     }
 
     // 保存到数据库
-    const fileId = uuidv4()
+    const fileId = uuidv7()
     await db.insert(files).values({
       id: fileId,
       userId,
@@ -291,7 +291,7 @@ export class FileService {
   }
 
   async createFolder(name: string, userId: string, parentId?: string) {
-    const folderId = uuidv4()
+    const folderId = uuidv7()
     await db.insert(folders).values({
       id: folderId,
       name,
@@ -790,7 +790,7 @@ import { headers } from "next/headers"
 import { db } from "@/server/db"
 import { fileShares, files } from "@/server/db/schema"
 import { eq, and } from "drizzle-orm"
-import { v4 as uuidv4 } from "uuid"
+import { v7 as uuidv7 } from "uuid"
 
 export async function shareFile(
   fileId: string,
@@ -815,8 +815,8 @@ export async function shareFile(
     throw new Error("文件未找到")
   }
 
-  const shareToken = uuidv4().replace(/-/g, '')
-  const shareId = uuidv4()
+  const shareToken = uuidv7().replace(/-/g, '')
+  const shareId = uuidv7()
 
   await db.insert(fileShares).values({
     id: shareId,

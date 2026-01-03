@@ -1,4 +1,4 @@
-import type { Stripe as StripeTypes } from 'stripe';
+import type Stripe from 'stripe';
 
 // Payment type
 export type PaymentType = 'one_time' | 'subscription';
@@ -131,7 +131,7 @@ export interface PaymentProvider {
 export interface WebhookEvent {
   id: string;
   type: PaymentEventType;
-  data: StripeTypes.Event.Data;
+  data: Stripe.Event.Data;
   created: number;
 }
 
@@ -150,9 +150,9 @@ export interface PriceInfo {
 export interface BillingInfo {
   customerId?: string;
   subscription?: SubscriptionResult;
-  paymentMethods: StripeTypes.PaymentMethod[];
-  invoices: StripeTypes.Invoice[];
-  upcomingInvoice?: StripeTypes.Invoice;
+  paymentMethods: Stripe.PaymentMethod[];
+  invoices: Stripe.Invoice[];
+  upcomingInvoice?: Stripe.Invoice;
 }
 
 // Server Action 返回类型

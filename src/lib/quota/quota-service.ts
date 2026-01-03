@@ -1,7 +1,7 @@
 import { and, eq, sql } from 'drizzle-orm';
 import db from '@/server/db';
 import { userQuotaUsage } from '@/server/db/schema';
-import { v4 as uuidv4 } from 'uuid';
+import { v7 as uuidv7 } from 'uuid';
 
 export type QuotaService = 'api_call' | 'storage' | 'custom';
 
@@ -57,7 +57,7 @@ export async function updateQuotaUsage(params: UpdateQuotaUsageParams): Promise<
 
     // If no existing record, create a new one
     const newRecord = {
-      id: uuidv4(),
+      id: uuidv7(),
       userId,
       service,
       period,
@@ -164,7 +164,7 @@ export async function initializeQuotaUsage(
       
       if (!existing) {
         const newRecord = {
-          id: uuidv4(),
+          id: uuidv7(),
           userId,
           service,
           period,

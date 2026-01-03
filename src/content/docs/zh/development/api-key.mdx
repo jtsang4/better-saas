@@ -63,7 +63,7 @@ CREATE INDEX idx_api_usage_logs_created_at ON api_usage_logs(created_at);
 import { db } from '@/server/db'
 import { apiKeys, apiUsageLogs } from '@/server/db/schema'
 import { eq, and } from 'drizzle-orm'
-import { v4 as uuidv4 } from 'uuid'
+import { v7 as uuidv7 } from 'uuid'
 import crypto from 'crypto'
 
 export class ApiKeyService {
@@ -80,7 +80,7 @@ export class ApiKeyService {
     expiresAt?: Date
   ) {
     const keyValue = this.generateApiKey()
-    const id = uuidv4()
+    const id = uuidv7()
 
     const [apiKey] = await db
       .insert(apiKeys)
@@ -159,7 +159,7 @@ export class ApiKeyService {
     userAgent?: string
   ) {
     await db.insert(apiUsageLogs).values({
-      id: uuidv4(),
+      id: uuidv7(),
       apiKeyId,
       endpoint,
       method,

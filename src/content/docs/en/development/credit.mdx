@@ -57,7 +57,7 @@ The main credit service handles all credit operations:
 import { db } from '@/server/db'
 import { userCredits, creditTransactions } from '@/server/db/schema'
 import { eq } from 'drizzle-orm'
-import { v4 as uuidv4 } from 'uuid'
+import { v7 as uuidv7 } from 'uuid'
 
 export class CreditService {
   static async getUserCredits(userId: string) {
@@ -89,7 +89,7 @@ export class CreditService {
 
       // Record transaction
       await tx.insert(creditTransactions).values({
-        id: uuidv4(),
+        id: uuidv7(),
         userId,
         amount,
         type,
@@ -123,7 +123,7 @@ export class CreditService {
 
       // Record transaction
       await tx.insert(creditTransactions).values({
-        id: uuidv4(),
+        id: uuidv7(),
         userId,
         amount: -amount,
         type: 'spend',

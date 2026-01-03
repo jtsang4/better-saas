@@ -1,4 +1,4 @@
-import { Stripe } from 'stripe';
+import Stripe from 'stripe';
 import { env } from '@/env';
 import { paymentConfig } from '../../config/payment.config';
 
@@ -6,11 +6,11 @@ import { paymentConfig } from '../../config/payment.config';
 export const stripeConfig = {
   secretKey: paymentConfig.stripe.secretKey,
   webhookSecret: paymentConfig.stripe.webhookSecret,
-  apiVersion: paymentConfig.stripe.apiVersion as '2025-06-30.basil',
+  apiVersion: paymentConfig.stripe.apiVersion,
 };
 
 // Server-side Stripe instance
 export const stripe = new Stripe(stripeConfig.secretKey, {
-  apiVersion: stripeConfig.apiVersion,
+  apiVersion: stripeConfig.apiVersion as Stripe.LatestApiVersion,
   typescript: true,
-}); 
+});

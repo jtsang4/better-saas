@@ -1,4 +1,4 @@
-import { boolean, integer, pgTable, text, timestamp } from 'drizzle-orm/pg-core';
+import { boolean, integer, pgTable, text, timestamp, unique } from 'drizzle-orm/pg-core';
 
 export const user = pgTable('user', {
   id: text('id').primaryKey(),
@@ -143,13 +143,13 @@ export const creditTransactions = pgTable('credit_transactions', {
   userId: text('user_id')
     .notNull()
     .references(() => user.id, { onDelete: 'cascade' }),
-  type: text('type', { 
-    enum: ['earn', 'spend', 'refund', 'admin_adjust', 'freeze', 'unfreeze'] 
+  type: text('type', {
+    enum: ['earn', 'spend', 'refund', 'admin_adjust', 'freeze', 'unfreeze'],
   }).notNull(),
   amount: integer('amount').notNull(),
   balanceAfter: integer('balance_after').notNull(),
-  source: text('source', { 
-    enum: ['subscription', 'api_call', 'admin', 'storage', 'bonus'] 
+  source: text('source', {
+    enum: ['subscription', 'api_call', 'admin', 'storage', 'bonus'],
   }).notNull(),
   description: text('description'),
   referenceId: text('reference_id'),
@@ -157,22 +157,18 @@ export const creditTransactions = pgTable('credit_transactions', {
   createdAt: timestamp('created_at')
     .$defaultFn(() => /* @__PURE__ */ new Date())
     .notNull(),
-}, (table) => ({
+}, (table) => [
   // Ensure idempotency: prevent duplicate non-null referenceId per user
-  userReferenceUnique: {
-    name: 'credit_user_reference_unique',
-    columns: [table.userId, table.referenceId],
-    unique: true,
-  },
-}));
+  unique('credit_user_reference_unique').on(table.userId, table.referenceId),
+]);
 
 export const userQuotaUsage = pgTable('user_quota_usage', {
   id: text('id').primaryKey(),
   userId: text('user_id')
     .notNull()
     .references(() => user.id, { onDelete: 'cascade' }),
-  service: text('service', { 
-    enum: ['api_call', 'storage', 'custom'] 
+  service: text('service', {
+    enum: ['api_call', 'storage', 'custom'],
   }).notNull(),
   period: text('period').notNull(), // Format: YYYY-MM
   usedAmount: integer('used_amount').notNull().default(0),
@@ -182,14 +178,10 @@ export const userQuotaUsage = pgTable('user_quota_usage', {
   updatedAt: timestamp('updated_at')
     .$defaultFn(() => /* @__PURE__ */ new Date())
     .notNull(),
-}, (table) => ({
+}, (table) => [
   // Composite unique index for user, service, and period
-  userServicePeriodIdx: { 
-    name: 'user_service_period_idx', 
-    columns: [table.userId, table.service, table.period], 
-    unique: true 
-  },
-}));
+  unique('user_service_period_idx').on(table.userId, table.service, table.period),
+]);
 
 export const apiKey = pgTable('api_key', {
   id: text('id').primaryKey(),

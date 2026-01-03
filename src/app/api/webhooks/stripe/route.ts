@@ -2,7 +2,7 @@ import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import { StripeProvider } from '@/payment/stripe/provider';
 import { paymentRepository } from '@/server/db/repositories/payment-repository';
-import type { Stripe as StripeTypes } from 'stripe';
+import type Stripe from 'stripe';
 import type { SubscriptionWithPeriod, InvoiceWithSubscription } from '@/types/stripe-extended';
 import type { PaymentStatus } from '@/payment/types';
 import { ErrorLogger, logUtils } from '@/lib/logger/logger-utils';
@@ -348,8 +348,8 @@ export async function POST(request: NextRequest) {
   }
 }
 
-async function handleCheckoutSessionCompleted(event: StripeTypes.Event) {
-  const session = event.data.object as StripeTypes.Checkout.Session;
+async function handleCheckoutSessionCompleted(event: Stripe.Event) {
+  const session = event.data.object as Stripe.Checkout.Session;
   
   try {
     webhookLogger.info({
@@ -535,7 +535,7 @@ async function handleCheckoutSessionCompleted(event: StripeTypes.Event) {
   }
 }
 
-async function handleSubscriptionCreated(event: StripeTypes.Event) {
+async function handleSubscriptionCreated(event: Stripe.Event) {
   const subscription = event.data.object as SubscriptionWithPeriod;
   
   try {
@@ -589,7 +589,7 @@ async function handleSubscriptionCreated(event: StripeTypes.Event) {
   }
 }
 
-async function handleSubscriptionUpdated(event: StripeTypes.Event) {
+async function handleSubscriptionUpdated(event: Stripe.Event) {
   const subscription = event.data.object as SubscriptionWithPeriod;
   
   try {
@@ -653,8 +653,8 @@ async function handleSubscriptionUpdated(event: StripeTypes.Event) {
   }
 }
 
-async function handleSubscriptionDeleted(event: StripeTypes.Event) {
-  const subscription = event.data.object as StripeTypes.Subscription;
+async function handleSubscriptionDeleted(event: Stripe.Event) {
+  const subscription = event.data.object as Stripe.Subscription;
   
   try {
     const paymentRecord = await paymentRepository.findBySubscriptionId(subscription.id);
@@ -695,7 +695,7 @@ async function handleSubscriptionDeleted(event: StripeTypes.Event) {
   }
 }
 
-async function handleInvoicePaymentSucceeded(event: StripeTypes.Event) {
+async function handleInvoicePaymentSucceeded(event: Stripe.Event) {
   const invoice = event.data.object as InvoiceWithSubscription;
   
   try {
@@ -729,7 +729,7 @@ async function handleInvoicePaymentSucceeded(event: StripeTypes.Event) {
   }
 }
 
-async function handleInvoicePaymentFailed(event: StripeTypes.Event) {
+async function handleInvoicePaymentFailed(event: Stripe.Event) {
   const invoice = event.data.object as InvoiceWithSubscription;
   
   try {
@@ -763,7 +763,7 @@ async function handleInvoicePaymentFailed(event: StripeTypes.Event) {
   }
 }
 
-async function handleInvoicePaid(event: StripeTypes.Event) {
+async function handleInvoicePaid(event: Stripe.Event) {
   const invoice = event.data.object as InvoiceWithSubscription;
   
   try {

@@ -2,7 +2,7 @@ import { eq, desc, and, inArray } from 'drizzle-orm';
 import db from '@/server/db';
 import { payment, paymentEvent } from '@/server/db/schema';
 import type { PaymentRecord, PaymentStatus, PaymentType, PaymentInterval } from '@/payment/types';
-import { v4 as uuidv4 } from 'uuid';
+import { v7 as uuidv7 } from 'uuid';
 
 export interface CreatePaymentData {
   id?: string;
@@ -43,12 +43,12 @@ export class PaymentRepository {
    * Create payment record
    */
   async create(data: CreatePaymentData): Promise<PaymentRecord> {
-    const paymentId = data.id || uuidv4();
+    const paymentId = data.id || uuidv7();
     
     const [result] = await db
       .insert(payment)
       .values({
-        id: data.id || uuidv4(),
+        id: data.id || uuidv7(),
         priceId: data.priceId,
         type: data.type,
         interval: data.interval || null,
@@ -185,7 +185,7 @@ export class PaymentRepository {
    */
   async createEvent(data: CreatePaymentEventData): Promise<void> {
     await db.insert(paymentEvent).values({
-      id: uuidv4(),
+      id: uuidv7(),
       paymentId: data.paymentId,
       eventType: data.eventType,
       stripeEventId: data.stripeEventId || null,

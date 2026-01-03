@@ -48,13 +48,13 @@ The main API Key service handles all key operations:
 import { db } from '@/server/db'
 import { apiKey, user } from '@/server/db/schema'
 import { eq, and } from 'drizzle-orm'
-import { v4 as uuidv4 } from 'uuid'
+import { v7 as uuidv7 } from 'uuid'
 import crypto from 'crypto'
 
 export class ApiKeyService {
   static generateKeyValue(): string {
     const prefix = 'bs_'
-    const randomPart = uuidv4().replace(/-/g, '')
+    const randomPart = uuidv7().replace(/-/g, '')
     return `${prefix}${randomPart}`
   }
 
@@ -64,7 +64,7 @@ export class ApiKeyService {
     expiresAt?: Date
   ) {
     const keyValue = this.generateKeyValue()
-    const keyId = uuidv4()
+    const keyId = uuidv7()
 
     const [newKey] = await db
       .insert(apiKey)
