@@ -2,7 +2,7 @@
 
 [English](README.md) | 中文版 
 
-一个现代化的全栈 SaaS 应用程序，基于 Next.js 15 构建，集成了身份验证、支付、文件管理和国际化功能，并配备了全面的测试套件。
+一个现代化的全栈 SaaS 应用程序，基于 Next.js 16 构建，集成了身份验证、支付、文件管理和国际化功能，并配备了全面的测试套件。
 
 ## 🚀 功能特性
 
@@ -15,14 +15,14 @@
 - **📖 文档系统**: 内置文档系统，基于 Fumadocs
 - **🔒 路由保护**: 基于角色的访问控制和路由保护
 - **👥 管理后台**: 用户管理和系统管理
-- **⚡ 性能优化**: 使用 Next.js 15 App Router 和 Turbo 模式优化
-- **🧪 测试**: 全面的测试套件，包括 Jest、Playwright 和集成测试
+- **⚡ 性能优化**: 使用 Next.js 16 App Router 和 Turbo 模式优化
+- **🧪 测试**: 基于 Vitest 的单元/集成测试，搭配 Testing Library
 
 ## 🛠️ 技术栈
 
 ### 前端
 
-- **框架**: Next.js 15 (App Router)
+- **框架**: Next.js 16 (App Router)
 - **UI 组件**: Radix UI + Tailwind CSS
 - **状态管理**: Zustand
 - **数据获取**: SWR
@@ -44,9 +44,8 @@
 - **包管理器**: pnpm
 - **代码质量**: Biome（格式化、代码检查）
 - **环境**: @t3-oss/env-nextjs
-- **单元测试**: Jest 配合 React Testing Library
-- **集成测试**: Jest 配合数据库集成
-- **端到端测试**: Playwright 支持多浏览器
+- **单元测试**: Vitest 配合 React Testing Library
+- **集成测试**: Vitest 配合数据库集成
 - **测试覆盖率**: 全面的覆盖率报告
 
 ## 📖 文档

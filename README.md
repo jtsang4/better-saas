@@ -2,7 +2,7 @@
 
 [中文版 README](README_zh.md) | English
 
-A modern, full-stack SaaS application built with Next.js 15, featuring authentication, payments, file management, and internationalization with comprehensive testing suite.
+A modern, full-stack SaaS application built with Next.js 16, featuring authentication, payments, file management, and internationalization with a comprehensive testing suite.
 
 ## 🚀 Features
 
@@ -15,14 +15,14 @@ A modern, full-stack SaaS application built with Next.js 15, featuring authentic
 - **📖 Documentation**: Built-in documentation system with Fumadocs
 - **🔒 Protected Routes**: Role-based access control and route protection
 - **👥 Admin Dashboard**: User management and system administration
-- **⚡ Performance**: Optimized with Next.js 15 App Router and Turbo mode
-- **🧪 Testing**: Comprehensive testing suite with Jest, Playwright, and integration tests
+- **⚡ Performance**: Optimized with Next.js 16 App Router and Turbo mode
+- **🧪 Testing**: Vitest-powered unit and integration tests with Testing Library
 
 ## 🛠️ Tech Stack
 
 ### Frontend
 
-- **Framework**: Next.js 15 (App Router)
+- **Framework**: Next.js 16 (App Router)
 - **UI Components**: Radix UI + Tailwind CSS
 - **State Management**: Zustand
 - **Data Fetching**: SWR
@@ -44,9 +44,8 @@ A modern, full-stack SaaS application built with Next.js 15, featuring authentic
 - **Package Manager**: pnpm
 - **Code Quality**: Biome (formatting, linting)
 - **Environment**: @t3-oss/env-nextjs
-- **Unit Testing**: Jest with React Testing Library
-- **Integration Testing**: Jest with database integration
-- **E2E Testing**: Playwright with multi-browser support
+- **Unit Testing**: Vitest with React Testing Library
+- **Integration Testing**: Vitest with database integration
 - **Test Coverage**: Comprehensive coverage reporting
 
 ## 📖 Documentation
