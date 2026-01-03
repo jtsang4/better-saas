@@ -71,7 +71,7 @@
     "fumadocs-core": "^16.4.2",
     "fumadocs-mdx": "^14.2.4",
     "fumadocs-ui": "^16.4.2",
-    "jimp": "^0.22.12",
+    "jimp": "^1.6.0",
     "lucide-react": "^0.525.0",
     "mime-types": "^3.0.1",
     "next": "16.1.1",
@@ -135,6 +135,8 @@
   "pnpm": {
     "onlyBuiltDependencies": [
       "@biomejs/biome",
+      "@parcel/watcher",
+      "@swc/core",
       "@tailwindcss/oxide",
       "esbuild",
       "sharp",
