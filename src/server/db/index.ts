@@ -1,6 +1,7 @@
 import { neon } from '@neondatabase/serverless';
 import { drizzle } from 'drizzle-orm/neon-http';
 import { env } from '@/env';
+// biome-ignore lint/performance/noNamespaceImport: <special db schema import>
 import * as schema from './schema';
 
 // 使用 neon-http 连接，支持 Edge Runtime 和 Cloudflare Workers

@@ -127,7 +127,33 @@ export const payment = pgTable('payment', {
 // src/server/db/index.ts
 import { env } from '@/env';
 import { drizzle } from 'drizzle-orm/neon-http';
-import * as schema from './schema';
+import {
+  account,
+  apiKey,
+  creditTransactions,
+  file,
+  payment,
+  paymentEvent,
+  session,
+  user,
+  userCredits,
+  userQuotaUsage,
+  verification,
+} from './schema';
+
+const schema = {
+  account,
+  apiKey,
+  creditTransactions,
+  file,
+  payment,
+  paymentEvent,
+  session,
+  user,
+  userCredits,
+  userQuotaUsage,
+  verification,
+};
 
 const db = drizzle(env.DATABASE_URL, { schema });
 
