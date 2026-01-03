@@ -1,11 +1,9 @@
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
-
+import { getTranslations } from 'next-intl/server';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-
 import { categories } from '@/lib/blocks-registry';
-import { getTranslations } from 'next-intl/server';
 
 export default async function BlocksPage() {
   const t = await getTranslations('blocks');
@@ -13,9 +11,7 @@ export default async function BlocksPage() {
     <div className="container mx-auto py-8">
       <div className="mb-8 text-center">
         <h1 className="mb-4 font-bold text-3xl">{t('title')}</h1>
-        <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
-          {t('description')}
-        </p>
+        <p className="mx-auto max-w-2xl text-lg text-muted-foreground">{t('description')}</p>
       </div>
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">

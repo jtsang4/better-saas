@@ -1,7 +1,7 @@
-import { useUser, useUpdateUser, useAuthLoading } from '@/store/auth-store';
-import type { ProfileFormData, UseProfileReturn } from '@/types/profile';
+import { useEffect, useState } from 'react';
 import { uploadAvatarAction } from '@/server/actions/upload-avatar';
-import { useState, useEffect } from 'react';
+import { useAuthLoading, useUpdateUser, useUser } from '@/store/auth-store';
+import type { ProfileFormData, UseProfileReturn } from '@/types/profile';
 import { useToastMessages } from './use-toast-messages';
 
 export function useProfile(): UseProfileReturn {
@@ -47,7 +47,7 @@ export function useProfile(): UseProfileReturn {
       } else {
         toastMessages.error.nameUpdateFailed(result.error);
       }
-    } catch (error) {
+    } catch (_error) {
       toastMessages.error.nameUpdateFailed();
     } finally {
       setIsUpdatingName(false);

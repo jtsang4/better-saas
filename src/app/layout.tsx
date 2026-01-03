@@ -1,8 +1,8 @@
 import '@/styles/globals.css';
 
-import { routing } from '@/i18n/routing';
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
+import { routing } from '@/i18n/routing';
 
 import { appConfig } from '../config/app.config';
 
@@ -46,21 +46,32 @@ const geist = Geist({
   variable: '--font-geist-sans',
   subsets: ['latin'],
   display: 'swap',
-  fallback: ['system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+  fallback: [
+    'system-ui',
+    '-apple-system',
+    'BlinkMacSystemFont',
+    'Segoe UI',
+    'Roboto',
+    'sans-serif',
+  ],
 });
 
 const geistMono = Geist_Mono({
   variable: '--font-geist-mono',
   subsets: ['latin'],
   display: 'swap',
-  fallback: ['ui-monospace', 'SFMono-Regular', 'SF Mono', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
+  fallback: [
+    'ui-monospace',
+    'SFMono-Regular',
+    'SF Mono',
+    'Menlo',
+    'Monaco',
+    'Consolas',
+    'monospace',
+  ],
 });
 
-export default async function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html
       lang={routing.defaultLocale}
@@ -69,6 +80,7 @@ export default async function RootLayout({
     >
       <body>
         <script
+          // biome-ignore lint/security/noDangerouslySetInnerHtml: injects a minimal __name shim before app code runs
           dangerouslySetInnerHTML={{
             __html: `
               if (typeof globalThis !== 'undefined' && typeof globalThis.__name === 'undefined') {

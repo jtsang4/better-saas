@@ -1,5 +1,9 @@
 'use client';
 
+import { Download, Eye, MoreHorizontal, Trash2 } from 'lucide-react';
+import Image from 'next/image';
+import { useLocale, useTranslations } from 'next-intl';
+import { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -12,11 +16,6 @@ import {
 import { Skeleton } from '@/components/ui/skeleton';
 import type { FileInfo } from '@/lib/files/file-service';
 import { cn } from '@/lib/utils';
-import { Download, Eye, MoreHorizontal, Trash2 } from 'lucide-react';
-import Image from 'next/image';
-import { useState } from 'react';
-import { useTranslations } from 'next-intl';
-import { useLocale } from 'next-intl';
 
 interface FileGridProps {
   files: FileInfo[];
@@ -157,7 +156,9 @@ export function FileGrid({
                       </Badge>
                     )}
                   </div>
-                  <p className="mt-1 text-muted-foreground text-xs">{formatDate(file.createdAt, locale)}</p>
+                  <p className="mt-1 text-muted-foreground text-xs">
+                    {formatDate(file.createdAt, locale)}
+                  </p>
                 </div>
 
                 {/* Action menu */}

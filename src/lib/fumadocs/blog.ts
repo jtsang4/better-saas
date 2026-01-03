@@ -1,7 +1,7 @@
-import { blog } from '@/.source';
-import { loader } from 'fumadocs-core/source';
 import type { InferMetaType, InferPageType, VirtualFile } from 'fumadocs-core/source';
+import { loader } from 'fumadocs-core/source';
 import type { ComponentType } from 'react';
+import { blog } from '@/.source';
 import { normalizeSourceFiles } from './source-utils';
 
 const blogSourceFiles = normalizeSourceFiles(

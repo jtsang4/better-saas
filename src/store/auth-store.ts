@@ -1,7 +1,7 @@
-import { authClient } from '@/lib/auth/auth-client';
 import type { User } from 'better-auth/types';
 import { create } from 'zustand';
 import { createJSONStorage, persist, subscribeWithSelector } from 'zustand/middleware';
+import { authClient } from '@/lib/auth/auth-client';
 import { ErrorLogger } from '@/lib/logger/logger-utils';
 
 const authErrorLogger = new ErrorLogger('auth-store');
@@ -60,7 +60,10 @@ interface AuthState {
   signInWithGithub: () => Promise<void>;
   signInWithGoogle: () => Promise<void>;
 
-  updateUser: (data: { name?: string; image?: string }) => Promise<{ success: boolean; error?: string }>;
+  updateUser: (data: {
+    name?: string;
+    image?: string;
+  }) => Promise<{ success: boolean; error?: string }>;
 
   initialize: () => Promise<void>;
   refreshSession: () => Promise<void>;
@@ -321,7 +324,7 @@ export const useAuthStore = create<AuthState>()(
             if (session.data) {
               const user = session.data.user;
               const isNewUser = !previousUser || previousUser.id !== user.id;
-              
+
               set({
                 user,
                 isAuthenticated: true,

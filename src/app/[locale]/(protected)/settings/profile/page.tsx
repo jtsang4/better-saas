@@ -1,8 +1,8 @@
 'use client';
 
+import { Loader2 } from 'lucide-react';
 import { ProfileContent } from '@/components/settings/profile-content';
 import { useProfile } from '@/hooks/use-profile';
-import { Loader2 } from 'lucide-react';
 
 export default function ProfilePage() {
   const profileData = useProfile();

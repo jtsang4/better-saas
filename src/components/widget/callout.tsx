@@ -1,7 +1,10 @@
 export function Callout({
   children,
   type = 'info',
-}: { children: React.ReactNode; type?: 'info' | 'warning' }) {
+}: {
+  children: React.ReactNode;
+  type?: 'info' | 'warning';
+}) {
   return (
     <div
       className={`my-4 border-l-4 bg-gray-50 dark:bg-gray-800 ${

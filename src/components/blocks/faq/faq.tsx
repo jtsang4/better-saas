@@ -1,3 +1,4 @@
+import { useMessages, useTranslations } from 'next-intl';
 import {
   Accordion,
   AccordionContent,
@@ -6,7 +7,6 @@ import {
 } from '@/components/ui/accordion';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { useTranslations, useMessages } from 'next-intl';
 
 interface TranslationFaqItem {
   question: string;
@@ -18,8 +18,6 @@ interface FaqItem {
   question: string;
   answer: string;
 }
-
-
 
 const Faq = () => {
   const faqData = useTranslations('faq');
@@ -35,10 +33,12 @@ const Faq = () => {
 
   // Get FAQ items from i18n
   const faqMessages = messages as { faq?: { items?: TranslationFaqItem[] } };
-  const items: FaqItem[] = (faqMessages?.faq?.items || []).map((item: TranslationFaqItem, index: number) => ({
-    ...item,
-    id: `faq-${index + 1}`,
-  }));
+  const items: FaqItem[] = (faqMessages?.faq?.items || []).map(
+    (item: TranslationFaqItem, index: number) => ({
+      ...item,
+      id: `faq-${index + 1}`,
+    })
+  );
   return (
     <section className="py-16">
       <div className="container space-y-16">
@@ -60,7 +60,7 @@ const Faq = () => {
         </Accordion>
         <div className="mx-auto flex max-w-4xl flex-col items-center rounded-lg bg-accent p-4 text-center md:rounded-xl md:p-6 lg:p-8">
           <div className="relative">
-            <Avatar className="-translate-x-[60%] absolute mb-4 size-16 origin-bottom scale-[80%] border bg-white md:mb-5">
+            <Avatar className="absolute mb-4 size-16 origin-bottom -translate-x-[60%] scale-[80%] border bg-white md:mb-5">
               <AvatarImage src="/avatar/2.png" />
               <AvatarFallback>SU</AvatarFallback>
             </Avatar>

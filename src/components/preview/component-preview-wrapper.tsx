@@ -1,7 +1,7 @@
 'use client';
 
-import type { ViewportSize } from '@/types/blocks';
 import { useState } from 'react';
+import type { ViewportSize } from '@/types/blocks';
 import { CodeDisplay } from './code-display';
 import { ComponentPreviewToolbar } from './component-preview-toolbar';
 import { ResponsivePreview } from './responsive-preview';

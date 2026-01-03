@@ -1,5 +1,8 @@
 'use client';
 
+import { Menu } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
 import {
   Accordion,
   AccordionContent,
@@ -19,10 +22,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/co
 import { LanguageSwitcher } from '@/components/widget/language-switcher';
 import { ThemeToggle } from '@/components/widget/theme-toggle';
 import { UserAvatarMenu } from '@/components/widget/user-avatar-menu';
-import { Book, Menu, Sunset, Trees, Zap } from 'lucide-react';
-import Link from 'next/link';
-import type { JSX } from 'react';
-import type { NavbarProps, MenuItem } from '@/types/navbar';
+import type { MenuItem, NavbarProps } from '@/types/navbar';
 
 function DesktopAuthDisplay({
   loginText,
@@ -113,7 +113,7 @@ const Navbar = ({
   logo,
   menu,
   auth,
-  locale,
+  locale: _locale,
   isAuthenticated,
   isLoading,
   isInitialized,
@@ -124,7 +124,7 @@ const Navbar = ({
 
   const menuItems = menuWithIcons;
 
-      // Render desktop menu items
+  // Render desktop menu items
   const renderMenuItem = (item: MenuItem) => {
     if (item.items && item.items.length > 0) {
       return (
@@ -235,7 +235,7 @@ const Navbar = ({
         <nav className="hidden justify-between lg:flex">
           <div className="flex items-center gap-6">
             <Link href={logo.url} className="flex items-center gap-2">
-              <img src={logo.src} className="w-8" alt={logo.alt} />
+              <Image src={logo.src} alt={logo.alt} width={32} height={32} className="h-8 w-8" />
               <span className="font-semibold text-lg">{logo.title}</span>
             </Link>
             <div className="flex items-center">
@@ -263,7 +263,7 @@ const Navbar = ({
         <div className="block lg:hidden">
           <div className="flex items-center justify-between">
             <Link href={logo.url} className="flex items-center gap-2">
-              <img src={logo.src} className="w-8" alt={logo.alt} />
+              <Image src={logo.src} alt={logo.alt} width={32} height={32} className="h-8 w-8" />
               <span className="font-semibold text-lg">{logo.title}</span>
             </Link>
             <Sheet>
@@ -276,7 +276,13 @@ const Navbar = ({
                 <SheetHeader>
                   <SheetTitle>
                     <Link href={logo.url} className="flex items-center gap-2">
-                      <img src={logo.src} className="w-8" alt={logo.alt} />
+                      <Image
+                        src={logo.src}
+                        alt={logo.alt}
+                        width={32}
+                        height={32}
+                        className="h-8 w-8"
+                      />
                       <span className="font-semibold text-lg">{logo.title}</span>
                     </Link>
                   </SheetTitle>

@@ -1,14 +1,12 @@
 'use client';
 
+import { Download } from 'lucide-react';
 import { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Download } from 'lucide-react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { CreditHistory } from './credit-history';
-import { useRouter } from '@/i18n/navigation';
 
 export function CreditHistoryPage() {
-  const router = useRouter();
   const [isExporting, setIsExporting] = useState(false);
 
   const handleExport = async () => {

@@ -1,23 +1,5 @@
-import {
-  CreditCard,
-  HelpCircle,
-  Layout,
-  Megaphone,
-  MessageCircle,
-  Star,
-  Users,
-  Zap,
-} from 'lucide-react';
-
+import { CreditCard, HelpCircle, Layout, Users, Zap } from 'lucide-react';
 import type { CategoryInfo, ComponentInfo } from '@/types/blocks';
-
-import { Faq } from '@/components/blocks/faq/faq';
-import { Features } from '@/components/blocks/features/features';
-import { Footer } from '@/components/blocks/footer/footer';
-// 导入所有组件
-import { Hero } from '@/components/blocks/hero/hero';
-import { Pricing } from '@/components/blocks/pricing/pricing';
-import { TechStack } from '@/components/blocks/tech-stack';
 
 // 组件分类定义
 export const categories: CategoryInfo[] = [

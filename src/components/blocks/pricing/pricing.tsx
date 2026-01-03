@@ -1,22 +1,20 @@
 'use client';
 
 import { ArrowRight, CircleCheck } from 'lucide-react';
-import { useState } from 'react';
 import { useTranslations } from 'next-intl';
-
+import { useState, useTransition } from 'react';
+import { toast } from 'sonner';
+import { PurchaseConfirmationDialog } from '@/components/payment/purchase-confirmation-dialog';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
-import { useIsAuthenticated } from '@/store/auth-store';
-import { useRouter } from '@/i18n/navigation';
-import { createCheckoutSession } from '@/server/actions/payment/create-subscription';
-import { toast } from 'sonner';
-import { useTransition } from 'react';
-import { ErrorLogger } from '@/lib/logger/logger-utils';
 import { usePaymentPlans } from '@/hooks/use-config';
-import { Badge } from '@/components/ui/badge';
-import { PurchaseConfirmationDialog } from '@/components/payment/purchase-confirmation-dialog';
+import { useRouter } from '@/i18n/navigation';
+import { ErrorLogger } from '@/lib/logger/logger-utils';
+import { createCheckoutSession } from '@/server/actions/payment/create-subscription';
+import { useIsAuthenticated } from '@/store/auth-store';
 
 const pricingErrorLogger = new ErrorLogger('pricing');
 
@@ -54,11 +52,7 @@ interface Pricing2Props {
   plans?: PricingPlan[];
 }
 
-const Pricing = ({
-  heading,
-  description,
-  plans,
-}: Pricing2Props) => {
+const Pricing = ({ heading, description, plans }: Pricing2Props) => {
   const t = useTranslations('pricing');
 
   // 使用i18n翻译或传入的props
@@ -71,26 +65,27 @@ const Pricing = ({
   const isAuthenticated = useIsAuthenticated();
   const router = useRouter();
   const paymentPlans = usePaymentPlans();
-  
+
   // Use configured plans if not provided as props
   // Convert payment plans to pricing plans format if needed
-  const pricingPlans = plans || paymentPlans.map((plan) => ({
-    ...plan,
-    monthlyPrice: plan.price === 0 ? 'Free' : `$${plan.price}`,
-    yearlyPrice: plan.price === 0 ? 'Free' : `$${Math.round((plan.yearlyPrice || plan.price * 10) / 12)}`,
-    yearlyTotal: plan.price === 0 ? 0 : (plan.yearlyPrice || plan.price * 10),
-    features: plan.features.map((feature: string) => ({ text: feature })),
-    stripePriceIds: plan.stripePriceIds || {
-      monthly: plan.stripePriceId,
-      yearly: plan.stripePriceId,
-    },
-    button: {
-      text: plan.price === 0
-        ? t('getStartedText')
-        : t('purchaseText'),
-    },
-    credits: plan.credits, // Pass through credits configuration
-  }));
+  const pricingPlans =
+    plans ||
+    paymentPlans.map((plan) => ({
+      ...plan,
+      monthlyPrice: plan.price === 0 ? 'Free' : `$${plan.price}`,
+      yearlyPrice:
+        plan.price === 0 ? 'Free' : `$${Math.round((plan.yearlyPrice || plan.price * 10) / 12)}`,
+      yearlyTotal: plan.price === 0 ? 0 : plan.yearlyPrice || plan.price * 10,
+      features: plan.features.map((feature: string) => ({ text: feature })),
+      stripePriceIds: plan.stripePriceIds || {
+        monthly: plan.stripePriceId,
+        yearly: plan.stripePriceId,
+      },
+      button: {
+        text: plan.price === 0 ? t('getStartedText') : t('purchaseText'),
+      },
+      credits: plan.credits, // Pass through credits configuration
+    }));
 
   const handlePurchaseClick = (plan: PricingPlan) => {
     if (!isAuthenticated) {
@@ -114,8 +109,8 @@ const Pricing = ({
     if (!selectedPlan) return;
 
     // Get corresponding price ID
-    const priceId = isYearly 
-      ? selectedPlan.stripePriceIds?.yearly 
+    const priceId = isYearly
+      ? selectedPlan.stripePriceIds?.yearly
       : selectedPlan.stripePriceIds?.monthly;
 
     if (!priceId) {
@@ -176,29 +171,42 @@ const Pricing = ({
                     <p>{plan.name}</p>
                   </CardTitle>
                   <p className="text-muted-foreground text-sm">{plan.description}</p>
-                  
+
                   {/* Credits Badge */}
                   {plan.credits && (
-                    <div className="flex flex-wrap gap-2 mb-3">
+                    <div className="mb-3 flex flex-wrap gap-2">
                       {plan.credits.monthly && (
-                        <Badge variant="secondary" className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
-                          💎 {isYearly ? plan.credits.yearly || plan.credits.monthly * 12 : plan.credits.monthly} Credits
+                        <Badge
+                          variant="secondary"
+                          className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
+                        >
+                          💎{' '}
+                          {isYearly
+                            ? plan.credits.yearly || plan.credits.monthly * 12
+                            : plan.credits.monthly}{' '}
+                          Credits
                           {isYearly ? '/year' : '/month'}
                         </Badge>
                       )}
                       {plan.credits.onSubscribe && (
-                        <Badge variant="outline" className="border-green-200 text-green-700 dark:border-green-800 dark:text-green-300">
+                        <Badge
+                          variant="outline"
+                          className="border-green-200 text-green-700 dark:border-green-800 dark:text-green-300"
+                        >
                           🎁 +{plan.credits.onSubscribe} Bonus
                         </Badge>
                       )}
                       {plan.credits.onSignup && (
-                        <Badge variant="outline" className="border-purple-200 text-purple-700 dark:border-purple-800 dark:text-purple-300">
+                        <Badge
+                          variant="outline"
+                          className="border-purple-200 text-purple-700 dark:border-purple-800 dark:text-purple-300"
+                        >
                           ✨ {plan.credits.onSignup} Free Credits
                         </Badge>
                       )}
                     </div>
                   )}
-                  
+
                   <span className="font-bold text-4xl">
                     {isYearly ? plan.yearlyPrice : plan.monthlyPrice}
                   </span>
@@ -230,8 +238,8 @@ const Pricing = ({
                   </ul>
                 </CardContent>
                 <CardFooter className="mt-auto">
-                  <Button 
-                    className="w-full" 
+                  <Button
+                    className="w-full"
                     onClick={() => handlePurchaseClick(plan)}
                     disabled={isPending}
                   >

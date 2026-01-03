@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.3.10/schema.json",
   "vcs": {
     "enabled": true,
     "clientKind": "git",
@@ -7,12 +7,15 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "ignore": [
-      ".next/**",
-      ".cursor/**",
-      ".vscode/**",
-      "node_modules/**",
-      "tests/**"
+    "includes": [
+      "**",
+      "!!drizzle",
+      "!!**/.next",
+      "!!**/.cursor",
+      "!!**/.vscode",
+      "!!**/node_modules",
+      "!tests",
+      "!**/tests"
     ]
   },
   "formatter": {
@@ -21,7 +24,13 @@
     "indentWidth": 2,
     "lineWidth": 100
   },
-  "organizeImports": { "enabled": true },
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
+  },
   "linter": {
     "enabled": true,
     "rules": {
@@ -34,11 +43,15 @@
           }
         }
       },
-      "suspicious": {
-        "noArrayIndexKey": "off"
-      },
       "complexity": {
         "noForEach": "off"
+      },
+      "a11y": {
+        "noStaticElementInteractions": "off"
+      },
+      "suspicious": {
+        "noArrayIndexKey": "off",
+        "noDocumentCookie": "off"
       },
       "recommended": true
     }
@@ -48,6 +61,11 @@
       "quoteStyle": "single",
       "trailingCommas": "es5",
       "semicolons": "always"
+    }
+  },
+  "css": {
+    "parser": {
+      "tailwindDirectives": true
     }
   }
 }

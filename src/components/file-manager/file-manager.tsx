@@ -1,17 +1,17 @@
 'use client';
 
+import { Search, Upload } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { PaginationControls } from '@/components/ui/pagination';
+import { useAppConfig } from '@/hooks/use-config';
 import { useFiles } from '@/hooks/use-files';
 import type { FileInfo } from '@/lib/files/file-service';
-import { Search, Upload } from 'lucide-react';
-import { useState } from 'react';
 import { FileTable } from './file-table';
 import { FileUpload } from './file-upload';
 import { ImagePreviewModal } from './image-preview-modal';
-import { useAppConfig } from '@/hooks/use-config';
-import { useTranslations } from 'next-intl';
 
 export function FileManager() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -62,7 +62,7 @@ export function FileManager() {
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <div className="relative">
-              <Search className="-translate-y-1/2 absolute top-1/2 left-3 h-4 w-4 text-muted-foreground" />
+              <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 placeholder={t('searchPlaceholder')}
                 value={searchQuery}
@@ -96,7 +96,6 @@ export function FileManager() {
       {/* Pagination */}
       {pagination && pagination.total > 0 && (
         <div className="flex items-center justify-between">
-          
           <PaginationControls
             currentPage={pagination.page}
             totalPages={Math.ceil(pagination.total / pagination.limit)}

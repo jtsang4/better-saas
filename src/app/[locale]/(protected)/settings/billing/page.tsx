@@ -1,7 +1,7 @@
-import { BillingPage } from '@/components/billing/billing-page';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Suspense } from 'react';
+import { BillingPage } from '@/components/billing/billing-page';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
 
 function BillingPageSkeleton() {
   return (
@@ -65,4 +65,4 @@ export default function BillingPageRoute() {
       <BillingPage />
     </Suspense>
   );
-} 
+}

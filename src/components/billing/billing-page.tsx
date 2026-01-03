@@ -1,18 +1,18 @@
 'use client';
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { SubscriptionCard } from '@/components/payment/subscription-card';
-import { getBillingInfo } from '@/server/actions/payment/get-billing-info';
-import type { BillingInfo } from '@/server/actions/payment/get-billing-info';
-import { useEffect, useState, useCallback } from 'react';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Calendar, CreditCard, RefreshCw } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
-import { toast } from 'sonner';
-import { ErrorLogger } from '@/lib/logger/logger-utils';
-import { syncSingleSubscription } from '@/server/actions/payment/sync-subscription-periods';
 import { useTranslations } from 'next-intl';
+import { useCallback, useEffect, useState } from 'react';
+import { toast } from 'sonner';
+import { SubscriptionCard } from '@/components/payment/subscription-card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { ErrorLogger } from '@/lib/logger/logger-utils';
+import type { BillingInfo } from '@/server/actions/payment/get-billing-info';
+import { getBillingInfo } from '@/server/actions/payment/get-billing-info';
+import { syncSingleSubscription } from '@/server/actions/payment/sync-subscription-periods';
 
 const billingErrorLogger = new ErrorLogger('billing-page');
 
@@ -42,7 +42,7 @@ export function BillingPage() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [t]);
 
   const handleSyncSubscription = useCallback(async () => {
     if (!billingInfo?.activeSubscription?.subscriptionId) {
@@ -68,7 +68,7 @@ export function BillingPage() {
     } finally {
       setSyncing(false);
     }
-  }, [billingInfo?.activeSubscription?.subscriptionId, loadBillingInfo]);
+  }, [billingInfo?.activeSubscription?.subscriptionId, loadBillingInfo, t]);
 
   useEffect(() => {
     loadBillingInfo();
@@ -92,7 +92,7 @@ export function BillingPage() {
       // Clean up URL parameters
       window.history.replaceState({}, '', window.location.pathname);
     }
-  }, [searchParams]);
+  }, [searchParams, t]);
 
   const formatDate = (date: Date | null | undefined) => {
     if (!date) return t('unknow');
@@ -262,24 +262,27 @@ export function BillingPage() {
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
                       <span className="font-medium">
-                        {payment.type === 'subscription' ? t('subscription') : t('one_time_payment')}
+                        {payment.type === 'subscription'
+                          ? t('subscription')
+                          : t('one_time_payment')}
                       </span>
                       <Badge className={getStatusColor(payment.status)}>
                         {getStatusText(payment.status)}
                       </Badge>
                     </div>
-                    <div className='flex items-center gap-2 text-muted-foreground text-sm'>
+                    <div className="flex items-center gap-2 text-muted-foreground text-sm">
                       <Calendar className="h-4 w-4" />
                       <span>{formatDate(payment.createdAt)}</span>
                     </div>
                     {payment.interval && (
-                      <div className='text-muted-foreground text-sm'>
-                        {t('billing_cycle')}：{payment.interval === 'month' ? t('month_payment') : t('year_payment')}
+                      <div className="text-muted-foreground text-sm">
+                        {t('billing_cycle')}：
+                        {payment.interval === 'month' ? t('month_payment') : t('year_payment')}
                       </div>
                     )}
                   </div>
                   <div className="text-right">
-                    <div className='text-muted-foreground text-sm'>{t('price_id')}</div>
+                    <div className="text-muted-foreground text-sm">{t('price_id')}</div>
                     <div className="font-mono text-sm">{payment.priceId}</div>
                   </div>
                 </div>

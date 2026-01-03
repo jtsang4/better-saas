@@ -1,6 +1,6 @@
+import type { ReactNode } from 'react';
 import { Footer } from '@/components/blocks/footer/footer';
 import { NavbarWrapper } from '@/components/blocks/navbar/navbar-wrapper';
-import type { ReactNode } from 'react';
 
 type Props = {
   children: ReactNode;
@@ -14,4 +14,4 @@ export default function MarketingLayout({ children }: Props) {
       <Footer />
     </div>
   );
-} 
+}

@@ -7,8 +7,8 @@ type Props = {
 };
 
 export async function generateMetadata({ params }: Props) {
-  const { locale } = await params;
-  
+  const { locale: _locale } = await params;
+
   const t = await getTranslations('blocks');
 
   return {
@@ -22,4 +22,4 @@ export async function generateMetadata({ params }: Props) {
 
 export default async function BlocksLayout({ children }: Props) {
   return <>{children}</>;
-} 
+}

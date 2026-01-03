@@ -1,10 +1,11 @@
-import { locales } from '@/i18n/routing';
-import { buildDocsTree } from '@/lib/fumadocs/docs';
+import type { Node } from 'fumadocs-core/page-tree';
 import { DocsLayout } from 'fumadocs-ui/layouts/docs';
 import { RootProvider } from 'fumadocs-ui/provider/next';
 import { getMessages } from 'next-intl/server';
 import type { ReactNode } from 'react';
 import { i18nConfig } from '@/config/i18n.config';
+import { locales } from '@/i18n/routing';
+import { buildDocsTree, type DocsTreeItem } from '@/lib/fumadocs/docs';
 
 type Props = {
   children: ReactNode;
@@ -29,28 +30,27 @@ export default async function Layout({ children, params }: Props) {
   };
 
   // Convert tree items to fumadocs format recursively
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const convertTreeItems = (items: typeof treeItems): any[] => {
+  const convertTreeItems = (items: DocsTreeItem[]): Node[] => {
     return items.map((item) => {
       if (item.type === 'folder') {
         return {
           type: 'folder',
           name: item.name,
           defaultOpen: item.defaultOpen,
-          children: item.children ? convertTreeItems(item.children) : []
+          children: item.children ? convertTreeItems(item.children) : [],
         };
       }
       return {
         type: 'page',
         name: item.name,
-        url: getLocalizedUrl(item.url || '')
+        url: getLocalizedUrl(item.url || ''),
       };
     });
   };
 
   const tree = {
     name: 'Documentation',
-    children: convertTreeItems(treeItems)
+    children: convertTreeItems(treeItems),
   };
 
   const navUrl = getLocalizedUrl('/docs');

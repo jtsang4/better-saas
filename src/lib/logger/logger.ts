@@ -1,5 +1,6 @@
 // Detect runtime environment
-const isCloudflareWorkers = typeof navigator !== 'undefined' && navigator.userAgent?.includes('Cloudflare-Workers');
+const isCloudflareWorkers =
+  typeof navigator !== 'undefined' && navigator.userAgent?.includes('Cloudflare-Workers');
 const isVercelEdge = typeof (globalThis as Record<string, unknown>).EdgeRuntime !== 'undefined';
 const isEdgeRuntime = isCloudflareWorkers || isVercelEdge;
 
@@ -21,14 +22,14 @@ function createEdgeLogger(prefix = ''): SimpleLogger {
     const logObj = typeof obj === 'object' ? obj : { message: obj };
     const message = msg || logObj.message || '';
     const fullMessage = prefix ? `[${prefix}] ${message}` : message;
-    
+
     const logData = {
       level,
       time: timestamp,
       ...logObj,
       msg: fullMessage,
     };
-    
+
     // 使用对应的 console 方法
     switch (level) {
       case 'error':
@@ -54,7 +55,12 @@ function createEdgeLogger(prefix = ''): SimpleLogger {
     debug: (obj, msg) => logWithPrefix('debug', obj, msg),
     trace: (obj, msg) => logWithPrefix('trace', obj, msg),
     fatal: (obj, msg) => logWithPrefix('fatal', obj, msg),
-    child: (obj) => createEdgeLogger(prefix ? `${prefix}:${(obj.service as string) || 'child'}` : (obj.service as string) || 'child'),
+    child: (obj) =>
+      createEdgeLogger(
+        prefix
+          ? `${prefix}:${(obj.service as string) || 'child'}`
+          : (obj.service as string) || 'child'
+      ),
   };
 }
 
@@ -66,7 +72,7 @@ if (isEdgeRuntime) {
 } else {
   // Use pino in Node.js environment
   const pino = require('pino');
-  
+
   logger = pino({
     level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
     ...(process.env.NODE_ENV === 'production' && {

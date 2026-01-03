@@ -1,12 +1,12 @@
 'use client';
 
+import { Download, X } from 'lucide-react';
+import Image from 'next/image';
+import { useTranslations } from 'next-intl';
+import { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import type { FileInfo } from '@/lib/files/file-service';
 import { cn } from '@/lib/utils';
-import { Download, X } from 'lucide-react';
-import Image from 'next/image';
-import { useEffect } from 'react';
-import { useTranslations } from 'next-intl';
 
 interface ImagePreviewModalProps {
   file: FileInfo | null;
@@ -63,6 +63,9 @@ export function ImagePreviewModal({ file, isOpen, onClose }: ImagePreviewModalPr
           'relative max-h-[90vh] max-w-[90vw] overflow-hidden rounded-lg bg-background shadow-2xl',
           'flex flex-col'
         )}
+        role="dialog"
+        aria-modal="true"
+        tabIndex={-1}
         onClick={(e) => e.stopPropagation()}
         onKeyDown={(e) => {
           if (e.key === 'Escape') {

@@ -1,9 +1,9 @@
 'use client';
 
+import { useState } from 'react';
 import { DashboardHeader } from '@/components/dashboard/dashboard-header';
 import { cn } from '@/lib/utils';
 import type { ProtectedContainerProps } from '@/types';
-import { useState } from 'react';
 import { ProtectedSidebar } from './protected-sidebar';
 
 export function ProtectedContainer({ children, sidebarGroups }: ProtectedContainerProps) {

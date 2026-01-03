@@ -13,11 +13,11 @@ export const navbarConfig: NavbarConfig = {
   auth: {
     login: {
       text: 'auth.login',
-      url: '/login'
+      url: '/login',
     },
     signup: {
       text: 'auth.signup',
-      url: '/signup'
+      url: '/signup',
     },
   },
 
@@ -26,7 +26,7 @@ export const navbarConfig: NavbarConfig = {
     items: [
       {
         title: 'menu.blog',
-        url: '/blog'
+        url: '/blog',
       },
       {
         title: 'menu.document',

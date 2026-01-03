@@ -1,8 +1,8 @@
 'use server';
 
+import { headers } from 'next/headers';
 import { auth } from '@/lib/auth/auth';
 import { isAdmin } from '@/lib/auth/permissions';
-import { headers } from 'next/headers';
 
 /**
  * Get user admin status on server side

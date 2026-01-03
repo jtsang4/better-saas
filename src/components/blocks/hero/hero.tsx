@@ -1,5 +1,4 @@
 import { Star } from 'lucide-react';
-import React from 'react';
 import { useTranslations } from 'next-intl';
 
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
@@ -21,12 +20,7 @@ interface HeroProps {
   };
 }
 
-const Hero = ({
-  heading,
-  description,
-  button,
-  reviews,
-}: HeroProps) => {
+const Hero = ({ heading, description, button, reviews }: HeroProps) => {
   const t = useTranslations('hero');
 
   // 使用i18n翻译或传入的props
@@ -72,7 +66,7 @@ const Hero = ({
           <a href={finalButton.url}>{finalButton.text}</a>
         </Button>
         <div className="mx-auto mt-10 flex w-fit flex-col items-center gap-4 sm:flex-row">
-          <span className="-space-x-3 mx-4 inline-flex items-center">
+          <span className="mx-4 inline-flex items-center -space-x-3">
             {finalReviews.avatars.map((avatar) => (
               <Avatar key={avatar.src} className="size-14 border bg-white">
                 <AvatarImage src={avatar.src} alt={avatar.alt} />
@@ -82,8 +76,10 @@ const Hero = ({
           <div>
             <div className="flex items-center gap-1">
               {[...Array(5)].map((_, index) => (
-                // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-                <Star key={index} className="size-5 fill-yellow-400 text-yellow-400" />
+                <Star
+                  key={`review-star-${index}`}
+                  className="size-5 fill-yellow-400 text-yellow-400"
+                />
               ))}
             </div>
             <p className="text-left font-medium text-muted-foreground">

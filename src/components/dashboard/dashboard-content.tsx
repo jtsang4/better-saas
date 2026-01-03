@@ -1,11 +1,11 @@
 'use client';
 
+import { Activity, Bell, CreditCard, DollarSign, Download, User, Users } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { Activity, Bell, CreditCard, DollarSign, Download, User, Users } from 'lucide-react';
-import { useTranslations } from 'next-intl';
 
 export function DashboardContent() {
   const t = useTranslations('dashboard');

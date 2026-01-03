@@ -1,5 +1,6 @@
 import { Book, Menu, Sunset, Trees, Zap } from 'lucide-react';
-
+import Image from 'next/image';
+import type { JSX } from 'react';
 import {
   Accordion,
   AccordionContent,
@@ -16,7 +17,6 @@ import {
   NavigationMenuTrigger,
 } from '@/components/ui/navigation-menu';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import type { JSX } from 'react';
 
 interface MenuItem {
   title: string;
@@ -145,7 +145,7 @@ const Navbar1 = ({
         <nav className="hidden justify-between lg:flex">
           <div className="flex items-center gap-6">
             <a href={logo.url} className="flex items-center gap-2">
-              <img src={logo.src} className="w-8" alt={logo.alt} />
+              <Image src={logo.src} alt={logo.alt} width={32} height={32} className="h-8 w-8" />
               <span className="font-semibold text-lg">{logo.title}</span>
             </a>
             <div className="flex items-center">
@@ -166,7 +166,7 @@ const Navbar1 = ({
         <div className="block lg:hidden">
           <div className="flex items-center justify-between">
             <a href={logo.url} className="flex items-center gap-2">
-              <img src={logo.src} className="w-8" alt={logo.alt} />
+              <Image src={logo.src} alt={logo.alt} width={32} height={32} className="h-8 w-8" />
               <span className="font-semibold text-lg">{logo.title}</span>
             </a>
             <Sheet>
@@ -179,7 +179,13 @@ const Navbar1 = ({
                 <SheetHeader>
                   <SheetTitle>
                     <a href={logo.url} className="flex items-center gap-2">
-                      <img src={logo.src} className="w-8" alt={logo.alt} />
+                      <Image
+                        src={logo.src}
+                        alt={logo.alt}
+                        width={32}
+                        height={32}
+                        className="h-8 w-8"
+                      />
                       <span className="font-semibold text-lg">{logo.title}</span>
                     </a>
                   </SheetTitle>
