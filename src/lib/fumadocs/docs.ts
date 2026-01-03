@@ -5,6 +5,15 @@ import type { TOCItemType } from 'fumadocs-core/toc';
 import type { ComponentType } from 'react';
 import { normalizeSourceFiles } from './source-utils';
 
+const getFileStem = (filePath: string) => {
+  const filename = filePath.split('/').pop() ?? '';
+  const dotIndex = filename.lastIndexOf('.');
+  return dotIndex === -1 ? filename : filename.slice(0, dotIndex);
+};
+
+const isIndexPage = (page: { path: string; slugs: string[] }) =>
+  page.slugs.length === 1 && getFileStem(page.path) === 'index';
+
 const docsSourceFiles = normalizeSourceFiles(
   docs.toFumadocsSource() as unknown as { files: VirtualFile[] | (() => VirtualFile[]) }
 );
@@ -75,7 +84,7 @@ export function getDocsPages(locale = 'en'): DocsPage[] {
   const filteredPages = allPages.filter((page) => {
     const urlParts = page.url.split('/');
     const pageLocale = urlParts[2];
-    return pageLocale === locale && page.file.name !== 'meta';
+    return pageLocale === locale && getFileStem(page.path) !== 'meta';
   });
 
   // Get meta configuration for ordering
@@ -86,7 +95,7 @@ export function getDocsPages(locale = 'en'): DocsPage[] {
     const pageMap = new Map<string, DocsPage>();
     for (const page of filteredPages) {
       // For index pages, the slug array is ['en'] or ['zh'], we need to map this to 'index'
-      if (page.slugs.length === 1 && page.file.name === 'index') {
+      if (isIndexPage(page)) {
         pageMap.set('index', page);
       } else {
         const pageSlug = page.slugs[page.slugs.length - 1];
@@ -144,7 +153,7 @@ export function buildDocsTree(locale = 'en'): DocsTreeItem[] {
   const filteredPages = allPages.filter((page) => {
     const urlParts = page.url.split('/');
     const pageLocale = urlParts[2];
-    return pageLocale === locale && page.file.name !== 'meta';
+    return pageLocale === locale && getFileStem(page.path) !== 'meta';
   });
 
   // Get root meta configuration
@@ -191,7 +200,7 @@ export function buildDocsTree(locale = 'en'): DocsTreeItem[] {
         // This is a regular page
         const page = filteredPages.find(p => {
           if (pageSlug === 'index') {
-            return p.slugs.length === 1 && p.file.name === 'index';
+            return isIndexPage(p);
           }
           return p.slugs.length === 2 && p.slugs[1] === pageSlug;
         });
