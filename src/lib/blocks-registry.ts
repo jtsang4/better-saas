@@ -85,7 +85,7 @@ const Hero7 = ({
 }: Hero7Props) => {
   return (
     <section className="pt-24">
-      <div className="container text-center">
+      <div className="container mx-auto text-center">
         <div className="mx-auto flex max-w-screen-lg flex-col gap-6">
           <h1 className="font-extrabold text-3xl lg:text-6xl">{heading}</h1>
           <p className="text-balance text-muted-foreground lg:text-lg">{description}</p>
