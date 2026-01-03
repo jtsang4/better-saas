@@ -3,7 +3,7 @@
  * Uses Jimp instead of sharp, supports Vercel Serverless Functions, Edge Functions and Cloudflare Workers
  */
 
-import Jimp from 'jimp';
+import { Jimp, JimpMime } from 'jimp';
 import { appConfig } from '@/config/app.config';
 
 export interface ImageMetadata {
@@ -14,7 +14,9 @@ export interface ImageMetadata {
 /**
  * Decode image
  */
-async function decodeImage(buffer: Buffer): Promise<Jimp> {
+type JimpReadResult = Awaited<ReturnType<typeof Jimp.read>>;
+
+async function decodeImage(buffer: Buffer): Promise<JimpReadResult> {
   try {
     return await Jimp.read(buffer);
   } catch (error) {
@@ -34,10 +36,10 @@ export async function generateThumbnail(buffer: Buffer): Promise<Buffer> {
     const image = await decodeImage(buffer);
 
     // Resize - use cover mode (maintain aspect ratio, crop excess)
-    const resizedImage = image.cover(300, 300);
+    const resizedImage = image.cover({ w: 300, h: 300 });
 
     // Set JPEG quality and convert to Buffer
-    const thumbnailBuffer = await resizedImage.quality(80).getBufferAsync(Jimp.MIME_JPEG);
+    const thumbnailBuffer = await resizedImage.getBuffer(JimpMime.jpeg, { quality: 80 });
 
     return thumbnailBuffer;
   } catch (error) {
@@ -57,8 +59,8 @@ export async function getImageMetadata(buffer: Buffer): Promise<ImageMetadata> {
     const image = await decodeImage(buffer);
 
     return {
-      width: image.getWidth(),
-      height: image.getHeight(),
+      width: image.width,
+      height: image.height,
     };
   } catch (error) {
     throw new Error(
