@@ -1,20 +1,21 @@
-'use server';
+"use server";
 
-import type { User } from 'better-auth/types';
-import { headers } from 'next/headers';
-import { auth } from '@/lib/auth/auth';
-import { isAdmin } from '@/lib/auth/permissions';
+import type { User } from "better-auth/types";
+import { headers } from "next/headers";
+import { auth } from "@/lib/auth/auth";
+import { isAdmin } from "@/lib/auth/permissions";
+import { appConfig } from "@/config/app.config";
 import {
   deleteFile,
   type FileInfo,
   getFileInfo,
   getFileList,
   uploadFile,
-} from '@/lib/files/file-service';
-import { ErrorLogger } from '@/lib/logger/logger-utils';
-import { getErrorMessage } from './error-messages';
+} from "@/lib/files/file-service";
+import { ErrorLogger } from "@/lib/logger/logger-utils";
+import { getErrorMessage } from "./error-messages";
 
-const fileErrorLogger = new ErrorLogger('file-actions');
+const fileErrorLogger = new ErrorLogger("file-actions");
 
 export interface FileListResponse {
   files: FileInfo[];
@@ -37,7 +38,9 @@ export interface FileDeleteResponse {
 /**
  * 上传文件 Server Action
  */
-export async function uploadFileAction(formData: FormData): Promise<FileUploadResponse> {
+export async function uploadFileAction(
+  formData: FormData,
+): Promise<FileUploadResponse> {
   let session: { user?: User } | null = null;
   let file: File | null = null;
 
@@ -47,13 +50,13 @@ export async function uploadFileAction(formData: FormData): Promise<FileUploadRe
     });
 
     if (!session?.user) {
-      throw new Error(await getErrorMessage('unauthorizedAccess'));
+      throw new Error(await getErrorMessage("unauthorizedAccess"));
     }
 
-    file = formData.get('file') as File;
+    file = formData.get("file") as File;
 
     if (!file) {
-      throw new Error(await getErrorMessage('noFileSelected'));
+      throw new Error(await getErrorMessage("noFileSelected"));
     }
 
     const fileInfo = await uploadFile(file, session.user.id);
@@ -64,13 +67,15 @@ export async function uploadFileAction(formData: FormData): Promise<FileUploadRe
     };
   } catch (error) {
     fileErrorLogger.logError(error as Error, {
-      operation: 'uploadFile',
+      operation: "uploadFile",
       userId: session?.user?.id,
       fileName: file?.name,
     });
 
     const errorMessage =
-      error instanceof Error ? error.message : await getErrorMessage('fileUploadFailed');
+      error instanceof Error
+        ? error.message
+        : await getErrorMessage("fileUploadFailed");
     throw new Error(errorMessage);
   }
 }
@@ -78,7 +83,9 @@ export async function uploadFileAction(formData: FormData): Promise<FileUploadRe
 /**
  * 删除文件 Server Action
  */
-export async function deleteFileAction(fileId: string): Promise<FileDeleteResponse> {
+export async function deleteFileAction(
+  fileId: string,
+): Promise<FileDeleteResponse> {
   let session: { user?: User } | null = null;
 
   try {
@@ -87,29 +94,34 @@ export async function deleteFileAction(fileId: string): Promise<FileDeleteRespon
     });
 
     if (!session?.user) {
-      throw new Error(await getErrorMessage('unauthorizedAccess'));
+      throw new Error(await getErrorMessage("unauthorizedAccess"));
     }
 
     // Check if user is admin - admins can delete any file
     const userIsAdmin = isAdmin(session.user);
 
     // Pass userId only if user is not admin (to enforce ownership check)
-    const success = await deleteFile(fileId, userIsAdmin ? undefined : session.user.id);
+    const success = await deleteFile(
+      fileId,
+      userIsAdmin ? undefined : session.user.id,
+    );
 
     if (!success) {
-      throw new Error(await getErrorMessage('fileDeleteFailed'));
+      throw new Error(await getErrorMessage("fileDeleteFailed"));
     }
 
     return { success: true };
   } catch (error) {
     fileErrorLogger.logError(error as Error, {
-      operation: 'deleteFile',
+      operation: "deleteFile",
       userId: session?.user?.id,
       fileId,
     });
 
     const errorMessage =
-      error instanceof Error ? error.message : await getErrorMessage('fileDeleteFailed');
+      error instanceof Error
+        ? error.message
+        : await getErrorMessage("fileDeleteFailed");
     throw new Error(errorMessage);
   }
 }
@@ -118,7 +130,7 @@ export async function deleteFileAction(fileId: string): Promise<FileDeleteRespon
  * 获取文件列表 Server Action
  */
 export async function getFileListAction(
-  options: { page?: number; limit?: number; search?: string } = {}
+  options: { page?: number; limit?: number; search?: string } = {},
 ): Promise<FileListResponse> {
   let session: { user?: User } | null = null;
 
@@ -128,22 +140,37 @@ export async function getFileListAction(
     });
 
     if (!session?.user) {
-      throw new Error(await getErrorMessage('unauthorizedAccess'));
+      throw new Error(await getErrorMessage("unauthorizedAccess"));
     }
 
-    const { page = 1, limit = 20, search = '' } = options;
+    const requestedPage = Number.isFinite(options.page) ? options.page : 1;
+    const requestedLimit = Number.isFinite(options.limit)
+      ? options.limit
+      : appConfig.pagination.defaultPageSize;
+    const search = options.search || "";
 
-    // Remove userId parameter to fetch all files instead of just current user's files
+    const page = Math.max(1, Math.floor(requestedPage || 1));
+    const limit = Math.min(
+      appConfig.pagination.maxPageSize,
+      Math.max(
+        1,
+        Math.floor(requestedLimit || appConfig.pagination.defaultPageSize),
+      ),
+    );
+
+    const userIsAdmin = isAdmin(session.user);
+
     const result = await getFileList({
       page,
       limit,
       search,
+      userId: userIsAdmin ? undefined : session.user.id,
     });
 
     return result;
   } catch (error) {
     fileErrorLogger.logError(error as Error, {
-      operation: 'getFileList',
+      operation: "getFileList",
       userId: session?.user?.id,
       page: options.page,
       limit: options.limit,
@@ -151,7 +178,9 @@ export async function getFileListAction(
     });
 
     const errorMessage =
-      error instanceof Error ? error.message : await getErrorMessage('fileListFailed');
+      error instanceof Error
+        ? error.message
+        : await getErrorMessage("fileListFailed");
     throw new Error(errorMessage);
   }
 }
@@ -168,28 +197,30 @@ export async function getFileInfoAction(fileId: string): Promise<FileInfo> {
     });
 
     if (!session?.user) {
-      throw new Error(await getErrorMessage('unauthorizedAccess'));
+      throw new Error(await getErrorMessage("unauthorizedAccess"));
     }
 
     const fileInfo = await getFileInfo(fileId);
 
     if (!fileInfo) {
-      throw new Error(await getErrorMessage('fileNotFound'));
+      throw new Error(await getErrorMessage("fileNotFound"));
     }
 
     // 检查权限：只有文件所有者可以查看
     if (fileInfo.uploadUserId !== session.user.id) {
-      throw new Error(await getErrorMessage('fileAccessDenied'));
+      throw new Error(await getErrorMessage("fileAccessDenied"));
     }
     return fileInfo;
   } catch (error) {
     fileErrorLogger.logError(error as Error, {
-      operation: 'getFileInfo',
+      operation: "getFileInfo",
       userId: session?.user?.id,
       fileId,
     });
     const errorMessage =
-      error instanceof Error ? error.message : await getErrorMessage('fileInfoFailed');
+      error instanceof Error
+        ? error.message
+        : await getErrorMessage("fileInfoFailed");
     throw new Error(errorMessage);
   }
 }

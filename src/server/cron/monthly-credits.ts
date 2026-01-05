@@ -1,9 +1,8 @@
-import { eq, inArray, isNull, not, or } from 'drizzle-orm';
+import { and, eq, inArray, isNull, not, or, sql } from 'drizzle-orm';
+import { v7 as uuidv7 } from 'uuid';
 import { paymentConfig } from '@/config/payment.config';
-import { creditService } from '@/lib/credits';
-import { quotaService } from '@/lib/quota/quota-service';
 import db from '@/server/db';
-import { payment, user } from '@/server/db/schema';
+import { creditTransactions, payment, user, userCredits, userQuotaUsage } from '@/server/db/schema';
 
 /**
  * Grant monthly free credits to users without active subscriptions
@@ -14,12 +13,14 @@ export async function grantMonthlyFreeCredits() {
   console.log('🎁 Starting monthly free credits distribution and quota update...');
 
   try {
+    const now = new Date();
+    const currentPeriod = now.toISOString().slice(0, 7);
+    const referenceId = `free_${currentPeriod}`;
+
     // Get all users who don't have active subscriptions (free users)
     const freeUsers = await db
       .select({
         userId: user.id,
-        userName: user.name,
-        userEmail: user.email,
       })
       .from(user)
       .leftJoin(payment, eq(payment.userId, user.id))
@@ -39,36 +40,95 @@ export async function grantMonthlyFreeCredits() {
     let errorCount = 0;
     const errors: Array<{ userId: string; error: string }> = [];
 
-    // Process each free user
-    for (const user of freeUsers) {
-      try {
-        // Check if user already has a credit account, create if not
-        await creditService.getOrCreateCreditAccount(user.userId);
+    const freeUserIds = freeUsers.map((freeUser) => freeUser.userId);
+    const creditedUserIds = new Set<string>();
 
-        // Grant monthly credits
-        await creditService.earnCredits({
-          userId: user.userId,
+    if (freeUserIds.length > 0) {
+      const creditedUsers = await db
+        .select({ userId: creditTransactions.userId })
+        .from(creditTransactions)
+        .where(
+          and(
+            eq(creditTransactions.referenceId, referenceId),
+            inArray(creditTransactions.userId, freeUserIds)
+          )
+        );
+
+      for (const creditedUser of creditedUsers) {
+        creditedUserIds.add(creditedUser.userId);
+      }
+    }
+
+    const eligibleUserIds = freeUserIds.filter((userId) => !creditedUserIds.has(userId));
+    const chunkSize = 500;
+
+    for (let index = 0; index < eligibleUserIds.length; index += chunkSize) {
+      const batch = eligibleUserIds.slice(index, index + chunkSize);
+
+      try {
+        await db
+          .insert(userCredits)
+          .values(
+            batch.map((userId) => ({
+              id: crypto.randomUUID(),
+              userId,
+              balance: 0,
+              totalEarned: 0,
+              totalSpent: 0,
+              frozenBalance: 0,
+              createdAt: now,
+              updatedAt: now,
+            }))
+          )
+          .onConflictDoNothing({ target: userCredits.userId });
+
+        const updatedAccounts = await db
+          .update(userCredits)
+          .set({
+            balance: sql`${userCredits.balance} + ${freeCredits}`,
+            totalEarned: sql`${userCredits.totalEarned} + ${freeCredits}`,
+            updatedAt: now,
+          })
+          .where(inArray(userCredits.userId, batch))
+          .returning({
+            userId: userCredits.userId,
+            balance: userCredits.balance,
+          });
+
+        if (updatedAccounts.length === 0) {
+          continue;
+        }
+
+        const transactionRows = updatedAccounts.map((account) => ({
+          id: crypto.randomUUID(),
+          userId: account.userId,
+          type: 'earn' as const,
           amount: freeCredits,
-          source: 'subscription',
+          balanceAfter: account.balance,
+          source: 'subscription' as const,
           description: 'Monthly free credits',
-          referenceId: `free_${new Date().toISOString().slice(0, 7)}`, // YYYY-MM format
-          metadata: {
+          referenceId,
+          metadata: JSON.stringify({
             type: 'monthly_free_credits',
             planId: 'free',
-            month: new Date().toISOString().slice(0, 7),
-          },
-        });
+            month: currentPeriod,
+          }),
+        }));
 
-        successCount++;
-        console.log(`✅ Granted ${freeCredits} credits to ${user.userEmail} (${user.userId})`);
+        const insertedTransactions = await db
+          .insert(creditTransactions)
+          .values(transactionRows)
+          .onConflictDoNothing({
+            target: [creditTransactions.userId, creditTransactions.referenceId],
+          })
+          .returning({ userId: creditTransactions.userId });
+
+        successCount += insertedTransactions.length;
       } catch (error) {
-        errorCount++;
+        errorCount += batch.length;
         const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-        errors.push({ userId: user.userId, error: errorMessage });
-        console.error(
-          `❌ Failed to grant credits to ${user.userEmail} (${user.userId}):`,
-          errorMessage
-        );
+        errors.push({ userId: `batch_${index}`, error: errorMessage });
+        console.error(`❌ Failed to grant credits for batch ${index}:`, errorMessage);
       }
     }
 
@@ -83,28 +143,46 @@ export async function grantMonthlyFreeCredits() {
     let quotaUpdateErrorCount = 0;
     const quotaErrors: Array<{ userId: string; error: string }> = [];
 
-    // Get all users for quota update
-    const allUsers = await db.select({ id: user.id, email: user.email }).from(user);
+    const allUsers = await db.select({ id: user.id }).from(user);
     console.log(`Found ${allUsers.length} users for quota update`);
 
-    for (const userData of allUsers) {
+    const services = ['api_call', 'storage'] as const;
+    const quotaChunkSize = 500;
+
+    for (let index = 0; index < allUsers.length; index += quotaChunkSize) {
+      const batch = allUsers.slice(index, index + quotaChunkSize);
+      const quotaRecords = batch.flatMap((userData) =>
+        services.map((service) => ({
+          id: uuidv7(),
+          userId: userData.id,
+          service,
+          period: currentPeriod,
+          usedAmount: 0,
+          createdAt: now,
+          updatedAt: now,
+        }))
+      );
+
       try {
-        await quotaService.initializeForUser(userData.id);
-        quotaUpdateSuccessCount++;
-        console.log(`✅ Updated quota records for ${userData.email} (${userData.id})`);
+        const inserted = await db
+          .insert(userQuotaUsage)
+          .values(quotaRecords)
+          .onConflictDoNothing({
+            target: [userQuotaUsage.userId, userQuotaUsage.service, userQuotaUsage.period],
+          })
+          .returning({ id: userQuotaUsage.id });
+
+        quotaUpdateSuccessCount += inserted.length;
       } catch (error) {
-        quotaUpdateErrorCount++;
+        quotaUpdateErrorCount += batch.length;
         const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-        quotaErrors.push({ userId: userData.id, error: errorMessage });
-        console.error(
-          `❌ Failed to update quota for ${userData.email} (${userData.id}):`,
-          errorMessage
-        );
+        quotaErrors.push({ userId: `batch_${index}`, error: errorMessage });
+        console.error(`❌ Failed to update quota for batch ${index}:`, errorMessage);
       }
     }
 
     console.log('📊 Quota update completed:');
-    console.log(`   ✅ Success: ${quotaUpdateSuccessCount} users`);
+    console.log(`   ✅ Success: ${quotaUpdateSuccessCount} records`);
     console.log(`   ❌ Errors: ${quotaUpdateErrorCount} users`);
 
     return {
